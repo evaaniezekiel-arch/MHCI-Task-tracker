@@ -1,21 +1,45 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { login } from '@/actions/auth';
+import { Mail, Lock, Eye, EyeOff, Loader2, User } from 'lucide-react';
+import { signup } from '@/actions/auth';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true);
-    const result = await login(formData);
+    const result = await signup(formData);
     if (result?.error) {
       toast.error(result.error);
       setIsLoading(false);
+    } else {
+      setIsSuccess(true);
+      toast.success('Check your email to confirm your account!');
     }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 bg-zinc-50">
+        <div className="w-full max-w-md text-center space-y-6 bg-white p-12 rounded-3xl shadow-xl shadow-black/5 border border-zinc-100">
+          <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto">
+            <Mail size={32} />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Verify your email</h1>
+          <p className="text-zinc-500">
+            We've sent a confirmation link to your email. Please click the link to activate your account.
+          </p>
+          <Link href="/login" className="block text-black font-bold hover:underline pt-4">
+            Back to login
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -27,10 +51,10 @@ export default function LoginPage() {
             <div className="w-6 h-6 bg-black rounded-sm transform rotate-45" />
           </div>
           <h2 className="text-4xl font-bold tracking-tight leading-tight">
-            Real-time Task <br /> Management for <br /> Executives.
+            The Executive <br /> Dashboard for <br /> Modern Teams.
           </h2>
           <p className="text-zinc-400 mt-4 max-w-sm">
-            Collaborate, track, and visualize performance across your entire organization with premium insights.
+            Join the most sophisticated task management platform designed for high-performance collaboration.
           </p>
         </div>
 
@@ -47,11 +71,25 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-            <p className="text-zinc-500 mt-2">Enter your credentials to access your dashboard.</p>
+            <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
+            <p className="text-zinc-500 mt-2">Get started with your executive workspace.</p>
           </div>
 
-          <form action={handleSubmit} className="space-y-6">
+          <form action={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-bold uppercase tracking-wider text-zinc-500">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+                <input 
+                  required
+                  name="fullName"
+                  type="text" 
+                  placeholder="John Doe" 
+                  className="w-full pl-12 pr-4 py-3 bg-zinc-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-bold uppercase tracking-wider text-zinc-500">Email Address</label>
               <div className="relative">
@@ -67,10 +105,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-bold uppercase tracking-wider text-zinc-500">Password</label>
-                <a href="#" className="text-xs font-bold text-black hover:underline">Forgot password?</a>
-              </div>
+              <label className="text-sm font-bold uppercase tracking-wider text-zinc-500">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input 
@@ -95,16 +130,13 @@ export default function LoginPage() {
               className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-black/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {isLoading && <Loader2 className="animate-spin" size={18} />}
-              <span>{isLoading ? 'Signing In...' : 'Sign In'}</span>
+              <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
             </button>
           </form>
 
-          <div className="pt-6 border-t text-center space-y-2">
+          <div className="pt-6 border-t text-center">
             <p className="text-sm text-zinc-500">
-              Don't have an account? <a href="/signup" className="text-black font-bold hover:underline">Sign up</a>
-            </p>
-            <p className="text-sm text-zinc-500">
-              You may have been sent an invite — <a href="#" className="text-black font-bold hover:underline">check your email</a>
+              Already have an account? <Link href="/login" className="text-black font-bold hover:underline">Sign in</Link>
             </p>
           </div>
         </div>
