@@ -50,8 +50,7 @@ export default function GlobalTaskView({ initialTasks, weeks }: { initialTasks: 
         week,
         tasks: weekTasks
       };
-    }).filter(data => data.tasks.length > 0 || filterMode === 'week'); // Always show current week even if empty, otherwise only show weeks with tasks
-
+    });
   }, [weeks, searchedTasks, filterMode, selectedMonth]);
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

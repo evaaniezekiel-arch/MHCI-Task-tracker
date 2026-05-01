@@ -60,6 +60,7 @@ export async function createTask(weekId: string, title: string) {
   if (error) throw error;
 
   revalidatePath(`/week/${weekId}`);
+  revalidatePath('/tasks');
   return data;
 }
 
@@ -82,8 +83,7 @@ export async function updateTask(taskId: string, updates: Partial<Task>) {
 
   if (error) throw error;
 
-  // Revalidate the week path if week_id is known or just revalidate generally
-  // UsuallytaskId is enough to trigger updates if using real-time
+  revalidatePath('/tasks');
   return data;
 }
 
@@ -96,6 +96,7 @@ export async function deleteTask(taskId: string) {
 
   if (error) throw error;
   revalidatePath('/dashboard');
+  revalidatePath('/tasks');
 }
 
 export async function updateTaskStatus(taskId: string, status: Status) {
