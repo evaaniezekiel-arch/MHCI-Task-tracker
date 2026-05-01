@@ -1,15 +1,22 @@
 import React from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
+import { getWeeks } from '@/actions/weeks';
+import { getUser } from '@/actions/auth';
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [weeks, user] = await Promise.all([
+    getWeeks(2025),
+    getUser()
+  ]);
+
   return (
     <div className="flex min-h-screen bg-[#fafafa]">
-      <Sidebar role="admin" />
+      <Sidebar role={user?.profile?.role || 'member'} weeks={weeks} />
       <div className="flex-1 flex flex-col transition-all duration-300 ml-16 md:ml-64">
         <Navbar />
         <main className="p-6 flex-1">
