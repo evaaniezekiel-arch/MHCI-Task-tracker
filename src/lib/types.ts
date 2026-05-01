@@ -1,5 +1,5 @@
 export type Role = 'admin' | 'executive' | 'member';
-export type Priority = 'High' | 'Medium' | 'Low';
+export type Priority = 'Critical' | 'High' | 'Medium' | 'Low';
 export type Status = 'Done' | 'In-Progress' | 'Pending' | 'Undone' | 'KIV';
 
 export interface Profile {
