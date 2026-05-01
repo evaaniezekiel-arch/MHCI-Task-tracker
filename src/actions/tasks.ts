@@ -84,6 +84,17 @@ export async function deleteTask(taskId: string, weekId: string) {
   revalidatePath(`/week/${weekId}`);
 }
 
+export async function deleteTask(taskId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('tasks')
+    .delete()
+    .eq('id', taskId);
+
+  if (error) throw error;
+  revalidatePath('/dashboard');
+}
+
 export async function updateTaskStatus(taskId: string, status: Status) {
   return updateTask(taskId, { status });
 }

@@ -59,11 +59,16 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
   const handleDeleteTask = async (taskId: string) => {
     if (!confirm('Are you sure you want to delete this task?')) return;
     
+    const originalTasks = [...tasks];
+    // Optimistic update
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+    
     try {
-      await deleteTask(taskId, weekId);
+      await deleteTask(taskId);
       toast.success('Task deleted');
     } catch (error) {
       toast.error('Failed to delete task');
+      setTasks(originalTasks); // Rollback
     }
   };
 
@@ -121,7 +126,7 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
                 <td className="px-4 py-3">
                   <span className={cn(
                     "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide",
-                    task.priority === 'High' ? 'bg-red-50 text-red-600' : 'bg-zinc-100 text-zinc-600'
+                    task.priority === 'High' || task.priority === 'Critical' ? 'bg-red-50 text-red-600' : 'bg-zinc-100 text-zinc-600'
                   )}>
                     {task.priority}
                   </span>
@@ -151,6 +156,7 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
                     <button 
                       onClick={() => handleDeleteTask(task.id)}
                       className="text-zinc-300 hover:text-red-500 transition-colors p-1"
+                      title="Delete task"
                     >
                       <Trash2 size={16} />
                     </button>
