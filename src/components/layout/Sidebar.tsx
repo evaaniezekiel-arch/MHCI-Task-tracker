@@ -10,8 +10,7 @@ import {
   ChevronLeft, 
   ChevronRight,
   LogOut,
-  ChevronDown,
-  User
+  ListTodo
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/actions/auth';
@@ -23,12 +22,11 @@ interface SidebarProps {
 
 export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const [weeksExpanded, setWeeksExpanded] = useState(true);
   const pathname = usePathname();
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { name: 'Profile', icon: User, href: '/profile' },
+    { name: 'Tasks', icon: ListTodo, href: '/tasks' },
   ];
 
   if (role === 'admin') {
@@ -71,45 +69,7 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
           );
         })}
 
-        {/* Weeks Dropdown */}
-        <div className="pt-2">
-          {!collapsed && (
-            <button 
-              onClick={() => setWeeksExpanded(!weeksExpanded)}
-              className="flex items-center justify-between w-full p-3 text-zinc-500 hover:text-white text-[10px] uppercase font-bold tracking-widest transition-colors"
-            >
-              <span>Weekly Logs</span>
-              <ChevronDown size={14} className={cn("transition-transform", weeksExpanded && "rotate-180")} />
-            </button>
-          )}
-          
-          {(weeksExpanded || collapsed) && (
-            <div className={cn("space-y-1", !collapsed && "pl-2")}>
-              {weeks.map((week) => {
-                const href = `/week/${week.id}`;
-                const isActive = pathname === href;
-                return (
-                  <Link
-                    key={week.id}
-                    href={href}
-                    className={cn(
-                      "flex items-center p-3 rounded-lg transition-colors text-sm",
-                      isActive ? "bg-white/10 text-white font-bold" : "hover:bg-zinc-900 text-zinc-500 hover:text-zinc-300",
-                      collapsed ? "justify-center" : "space-x-3"
-                    )}
-                  >
-                    <Calendar size={collapsed ? 20 : 16} />
-                    {!collapsed && (
-                      <span className="truncate">
-                        Week {week.week_number.toString().padStart(2, '0')}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+
       </div>
 
       <div className="p-4 border-t border-zinc-900">

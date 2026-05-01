@@ -21,6 +21,22 @@ export async function getTasksByWeek(weekId: string) {
   return data as Task[];
 }
 
+export async function getAllTasks() {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('tasks')
+    .select('*, weeks(*), task_assignees(*, profiles(*))')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching all tasks:', error);
+    return [];
+  }
+
+  return data;
+}
+
 export async function createTask(weekId: string, title: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

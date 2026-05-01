@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { Bell, User, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +35,7 @@ export default function Navbar({ user }: { user?: any }) {
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
         </button>
 
-        <div className="flex items-center space-x-3 pl-4 border-l">
+        <Link href="/profile" className="flex items-center space-x-3 pl-4 border-l hover:opacity-80 transition-opacity cursor-pointer">
           <div className="text-right">
             <p className="text-sm font-semibold">{fullName}</p>
             <p className={cn(
@@ -51,7 +52,7 @@ export default function Navbar({ user }: { user?: any }) {
               <div className="w-full h-full flex items-center justify-center bg-black text-white text-xs font-bold">{initials}</div>
             )}
           </div>
-        </div>
+        </Link>
       </div>
     </header>
   );
