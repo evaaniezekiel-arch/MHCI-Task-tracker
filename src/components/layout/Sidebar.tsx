@@ -10,7 +10,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/actions/auth';
@@ -27,6 +28,7 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+    { name: 'Profile', icon: User, href: '/profile' },
   ];
 
   if (role === 'admin') {
