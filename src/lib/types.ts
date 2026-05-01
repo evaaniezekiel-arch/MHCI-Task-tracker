@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'executive' | 'member';
+export type Role = 'admin' | 'member';
 export type Priority = 'Critical' | 'High' | 'Medium' | 'Low';
 export type Status = 'Done' | 'In-Progress' | 'Pending' | 'Undone' | 'KIV';
 

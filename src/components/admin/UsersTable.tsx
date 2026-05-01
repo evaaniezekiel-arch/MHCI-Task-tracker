@@ -75,7 +75,7 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                       (user.role === 'admin' || isTempAdmin) ? "bg-black text-white" : "bg-zinc-100 text-zinc-600"
                     )}>
                       {(user.role === 'admin' || isTempAdmin) && <Shield size={10} className="mr-1" />}
-                      {isTempAdmin ? 'Temp Admin' : user.role}
+                      {isTempAdmin ? 'Temp Admin' : (user.role === 'member' ? 'user' : user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4">

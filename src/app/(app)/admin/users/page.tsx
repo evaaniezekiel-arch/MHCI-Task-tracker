@@ -32,12 +32,8 @@ export default async function AdminUsersPage() {
               <span className="text-xs text-zinc-500 text-right">Full access. Can add tasks, manage users, and view analytics.</span>
             </div>
             <div className="flex justify-between items-center p-3 rounded-xl border border-zinc-50">
-              <span className="font-bold">Executive</span>
-              <span className="text-xs text-zinc-500 text-right">Can view all dashboards and comment. Cannot manage users.</span>
-            </div>
-            <div className="flex justify-between items-center p-3 rounded-xl border border-zinc-50">
-              <span className="font-bold">Member</span>
-              <span className="text-xs text-zinc-500 text-right">Restricted to filling and updating tasks assigned to them.</span>
+              <span className="font-bold">User</span>
+              <span className="text-xs text-zinc-500 text-right">Standard access. Restricted to filling and updating tasks assigned to them.</span>
             </div>
           </div>
         </div>
