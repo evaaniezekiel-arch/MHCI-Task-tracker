@@ -65,5 +65,13 @@ export async function getUser() {
     .eq('id', user.id)
     .single();
 
-  return { ...user, profile };
+  const { data: effectiveRole } = await supabase.rpc('get_my_role');
+
+  return { 
+    ...user, 
+    profile: {
+      ...profile,
+      effective_role: effectiveRole || profile?.role || 'member'
+    } 
+  };
 }

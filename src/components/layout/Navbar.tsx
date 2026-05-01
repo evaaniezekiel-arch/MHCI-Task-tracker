@@ -4,7 +4,12 @@ import React from 'react';
 import { Bell, User, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export default function Navbar() {
+export default function Navbar({ user }: { user?: any }) {
+  const profile = user?.profile;
+  const fullName = profile?.full_name || 'Guest User';
+  const role = profile?.effective_role || 'member';
+  const initials = fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() || 'GU';
+
   return (
     <header className="h-16 border-b bg-white flex items-center justify-between px-6 sticky top-0 z-30">
       <div className="flex items-center space-x-4">
@@ -31,11 +36,20 @@ export default function Navbar() {
 
         <div className="flex items-center space-x-3 pl-4 border-l">
           <div className="text-right">
-            <p className="text-sm font-semibold">Admin User</p>
-            <p className="text-[10px] text-zinc-500 uppercase font-bold bg-zinc-100 px-1.5 py-0.5 rounded leading-none inline-block">Admin</p>
+            <p className="text-sm font-semibold">{fullName}</p>
+            <p className={cn(
+              "text-[10px] uppercase font-bold px-1.5 py-0.5 rounded leading-none inline-block",
+              role === 'admin' ? "bg-black text-white" : "bg-zinc-100 text-zinc-500"
+            )}>
+              {role}
+            </p>
           </div>
           <div className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white overflow-hidden shadow-sm">
-            <div className="w-full h-full flex items-center justify-center bg-black text-white text-xs font-bold">AU</div>
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-black text-white text-xs font-bold">{initials}</div>
+            )}
           </div>
         </div>
       </div>
