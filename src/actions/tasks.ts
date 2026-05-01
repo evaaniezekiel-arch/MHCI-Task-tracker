@@ -71,19 +71,6 @@ export async function updateTask(taskId: string, updates: Partial<Task>) {
   return data;
 }
 
-export async function deleteTask(taskId: string, weekId: string) {
-  const supabase = await createClient();
-  
-  const { error } = await supabase
-    .from('tasks')
-    .delete()
-    .eq('id', taskId);
-
-  if (error) throw error;
-
-  revalidatePath(`/week/${weekId}`);
-}
-
 export async function deleteTask(taskId: string) {
   const supabase = await createClient();
   const { error } = await supabase
