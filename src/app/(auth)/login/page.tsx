@@ -1,7 +1,23 @@
-import React from 'react';
-import { Mail, Lock, Eye } from 'lucide-react';
+"use client";
+
+import React, { useState } from 'react';
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { login } from '@/actions/auth';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(formData: FormData) {
+    setIsLoading(true);
+    const result = await login(formData);
+    if (result?.error) {
+      toast.error(result.error);
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
@@ -35,12 +51,14 @@ export default function LoginPage() {
             <p className="text-zinc-500 mt-2">Enter your credentials to access your dashboard.</p>
           </div>
 
-          <form className="space-y-6">
+          <form action={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-bold uppercase tracking-wider text-zinc-500">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input 
+                  required
+                  name="email"
                   type="email" 
                   placeholder="name@company.com" 
                   className="w-full pl-12 pr-4 py-3 bg-zinc-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black transition-all"
@@ -56,18 +74,28 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input 
-                  type="password" 
+                  required
+                  name="password"
+                  type={showPassword ? "text" : "password"} 
                   placeholder="••••••••" 
                   className="w-full pl-12 pr-12 py-3 bg-zinc-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black transition-all"
                 />
-                <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-black">
-                  <Eye size={18} />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-black"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <button className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-black/10 active:scale-[0.98]">
-              Sign In
+            <button 
+              disabled={isLoading}
+              className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-black/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              {isLoading && <Loader2 className="animate-spin" size={18} />}
+              <span>{isLoading ? 'Signing In...' : 'Sign In'}</span>
             </button>
           </form>
 

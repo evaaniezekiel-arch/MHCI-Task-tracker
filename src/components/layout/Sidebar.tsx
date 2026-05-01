@@ -14,6 +14,7 @@ import {
   Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logout } from '@/actions/auth';
 
 interface SidebarProps {
   role?: string;
@@ -70,15 +71,18 @@ export default function Sidebar({ role = 'member' }: SidebarProps) {
       </nav>
 
       <div className="p-4 border-t border-zinc-800">
-        <button 
-          className={cn(
-            "flex items-center text-zinc-400 hover:text-white transition-colors w-full p-2",
-            collapsed ? "justify-center" : "space-x-3"
-          )}
-        >
-          <LogOut size={20} />
-          {!collapsed && <span>Logout</span>}
-        </button>
+        <form action={logout}>
+          <button 
+            type="submit"
+            className={cn(
+              "flex items-center text-zinc-400 hover:text-white transition-colors w-full p-2",
+              collapsed ? "justify-center" : "space-x-3"
+            )}
+          >
+            <LogOut size={20} />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </form>
       </div>
     </aside>
   );
