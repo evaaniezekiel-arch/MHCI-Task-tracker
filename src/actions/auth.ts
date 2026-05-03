@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string;
@@ -54,6 +54,7 @@ export async function logout() {
 }
 
 export async function getUser() {
+  noStore();
   try {
     const supabase = await createClient();
     const { data, error: authError } = await supabase.auth.getUser();
