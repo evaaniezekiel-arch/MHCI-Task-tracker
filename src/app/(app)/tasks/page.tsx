@@ -8,14 +8,14 @@ export const dynamic = 'force-dynamic';
 export default async function TasksPage() {
   const [tasks, weeks] = await Promise.all([
     getAllTasks(),
-    getWeeks(new Date().getFullYear()) // Fetch current year's weeks to assign new tasks
+    getWeeks() // Fetch ALL weeks, not just current year
   ]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Global Tasks</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
           <p className="text-zinc-500 mt-1">Manage and filter all your tasks across the entire calendar.</p>
         </div>
       </div>

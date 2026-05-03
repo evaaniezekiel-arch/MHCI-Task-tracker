@@ -10,7 +10,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const [weeks, user] = await Promise.all([
-    getWeeks(2025),
+    getWeeks(), // Fetch ALL weeks (no year filter)
     getUser()
   ]);
 

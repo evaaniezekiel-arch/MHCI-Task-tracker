@@ -65,13 +65,23 @@ export async function getUser() {
     .eq('id', user.id)
     .single();
 
-  const { data: effectiveRole } = await supabase.rpc('get_my_role');
+  // Try to get effective role from RPC, but fall back gracefully
+  let effectiveRole = profile?.role || 'member';
+  try {
+    const { data: rpcRole, error: rpcError } = await supabase.rpc('get_my_role');
+    if (!rpcError && rpcRole) {
+      effectiveRole = rpcRole;
+    }
+  } catch {
+    // RPC doesn't exist yet — fall back to profile.role
+  }
 
   return { 
     ...user, 
     profile: {
       ...profile,
-      effective_role: effectiveRole || profile?.role || 'member'
+      role: profile?.role || 'member',
+      effective_role: effectiveRole
     } 
   };
 }
