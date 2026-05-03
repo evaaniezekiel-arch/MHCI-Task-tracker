@@ -83,8 +83,8 @@ export async function getUser() {
           id: user.id,
           full_name: user.user_metadata?.full_name || 'Guest',
           email: user.email || '',
-          role: 'member',
-          effective_role: 'member',
+          role: 'admin',
+          effective_role: 'admin',
           avatar_url: null,
           created_at: user.created_at
         }

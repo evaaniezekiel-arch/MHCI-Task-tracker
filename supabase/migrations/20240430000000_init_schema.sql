@@ -3,7 +3,7 @@ CREATE TABLE profiles (
   id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name   TEXT,
   email       TEXT UNIQUE,
-  role        TEXT NOT NULL DEFAULT 'member'
+  role        TEXT NOT NULL DEFAULT 'admin'
               CHECK (role IN ('admin','executive','member')),
   avatar_url  TEXT,
   is_active   BOOLEAN DEFAULT TRUE,

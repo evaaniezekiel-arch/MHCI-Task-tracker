@@ -7,7 +7,7 @@ BEGIN
     new.id,
     new.raw_user_meta_data->>'full_name',
     new.email,
-    COALESCE(new.raw_user_meta_data->>'role', 'member'),
+    COALESCE(new.raw_user_meta_data->>'role', 'admin'),
     new.raw_user_meta_data->>'avatar_url'
   );
   RETURN NEW;
