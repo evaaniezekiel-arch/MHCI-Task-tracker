@@ -54,34 +54,58 @@ export async function logout() {
 }
 
 export async function getUser() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) return null;
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  // Try to get effective role from RPC, but fall back gracefully
-  let effectiveRole = profile?.role || 'member';
   try {
-    const { data: rpcRole, error: rpcError } = await supabase.rpc('get_my_role');
-    if (!rpcError && rpcRole) {
-      effectiveRole = rpcRole;
-    }
-  } catch {
-    // RPC doesn't exist yet — fall back to profile.role
-  }
+    const supabase = await createClient();
+    const { data, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !data?.user) return null;
 
-  return { 
-    ...user, 
-    profile: {
-      ...profile,
-      role: profile?.role || 'member',
-      effective_role: effectiveRole
-    } 
-  };
+    const user = data.user;
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
+      // Profile doesn't exist yet — return minimal user info
+      return { 
+        ...user, 
+        profile: {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || null,
+          email: user.email || '',
+          role: 'member',
+          effective_role: 'member',
+          avatar_url: null,
+          is_active: true,
+          created_at: user.created_at
+        } 
+      };
+    }
+
+    // Try to get effective role from RPC, but fall back gracefully
+    let effectiveRole = profile.role || 'member';
+    try {
+      const { data: rpcRole, error: rpcError } = await supabase.rpc('get_my_role');
+      if (!rpcError && rpcRole) {
+        effectiveRole = rpcRole;
+      }
+    } catch {
+      // RPC doesn't exist yet — fall back to profile.role
+    }
+
+    return { 
+      ...user, 
+      profile: {
+        ...profile,
+        role: profile.role || 'member',
+        effective_role: effectiveRole
+      } 
+    };
+  } catch (error) {
+    console.error('getUser error:', error);
+    return null;
+  }
 }
