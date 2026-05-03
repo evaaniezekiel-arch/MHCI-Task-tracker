@@ -25,22 +25,22 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-zinc-500 mt-1">Real-time overview of task performance across all weeks.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Real-time overview of task performance across all weeks.</p>
       </div>
 
       <StatCards data={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-zinc-400 mb-6">Overall Completion</h3>
+        <div className="lg:col-span-1 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Overall Completion</h3>
           <div className="flex-1 min-h-[300px]">
             <CompletionChart data={stats} />
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-zinc-400 mb-6">Monthly Performance Breakdown</h3>
+        <div className="lg:col-span-2 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Monthly Performance Breakdown</h3>
           <div className="flex-1 min-h-[300px]">
             <MonthlyBarChart data={monthlyData} />
           </div>
@@ -48,34 +48,34 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-zinc-400 mb-6">Weekly Completion Trend</h3>
+        <div className="lg:col-span-2 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Weekly Completion Trend</h3>
           <div className="flex-1 min-h-[300px]">
             <WeeklyTrendChart data={weeklyTrend} />
           </div>
         </div>
 
-        <div className="lg:col-span-1 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-zinc-400 mb-6">Monthly Summary</h3>
+        <div className="lg:col-span-1 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Monthly Summary</h3>
           <div className="flex-1 overflow-auto">
             {monthlyData.length > 0 ? (
               <table className="w-full text-left text-sm">
-                <thead className="bg-zinc-50 sticky top-0">
-                  <tr className="text-[10px] uppercase font-bold text-zinc-400 tracking-tighter">
+                <thead className="bg-muted sticky top-0">
+                  <tr className="text-[10px] uppercase font-bold text-muted-foreground tracking-tighter">
                     <th className="px-4 py-2">Month</th>
                     <th className="px-4 py-2">Total</th>
                     <th className="px-4 py-2">Done</th>
                     <th className="px-4 py-2">Pct</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-border">
                   {monthlyData.map((m: any, idx: number) => (
-                    <tr key={idx} className="hover:bg-zinc-50 transition-colors">
+                    <tr key={idx} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-3 font-medium">{typeof m.month === 'string' ? m.month.trim() : m.month}</td>
                       <td className="px-4 py-3">{m.total || 0}</td>
-                      <td className="px-4 py-3 text-green-600 font-bold">{m.done || 0}</td>
+                      <td className="px-4 py-3 text-green-600 dark:text-green-400 font-bold">{m.done || 0}</td>
                       <td className="px-4 py-3">
-                        <span className="text-[10px] font-bold bg-zinc-100 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-bold bg-muted px-1.5 py-0.5 rounded">
                           {(m.total || 0) > 0 ? Math.round(((m.done || 0) / m.total) * 100) : 0}%
                         </span>
                       </td>
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
                 </tbody>
               </table>
             ) : (
-              <div className="flex items-center justify-center h-full text-zinc-400 text-sm">
+              <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
                 No data available yet. Add some tasks to see analytics.
               </div>
             )}

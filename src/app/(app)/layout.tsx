@@ -25,7 +25,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#fafafa] dark:bg-zinc-950 transition-colors duration-300">
+    <div className="flex min-h-screen bg-background transition-colors duration-300">
       <Sidebar role={user?.profile?.effective_role || 'member'} weeks={weeks || []} />
       <div className="flex-1 flex flex-col transition-all duration-300 ml-16 md:ml-64">
         <Navbar user={user} />

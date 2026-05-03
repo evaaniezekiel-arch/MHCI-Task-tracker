@@ -33,17 +33,17 @@ export default function WeekViewClient({
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center space-x-3 mb-1">
-            <h1 className="text-3xl font-bold tracking-tight">Week {weekNumber.toString().padStart(2, '0')}</h1>
-            <span className="px-2 py-1 bg-black text-white text-[10px] font-bold rounded uppercase">Active</span>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Week {weekNumber.toString().padStart(2, '0')}</h1>
+            <span className="px-2 py-1 bg-primary text-primary-foreground text-[10px] font-bold rounded uppercase">Active</span>
           </div>
-          <p className="text-zinc-500">{startDate} – {endDate} · Executive Task Overview</p>
+          <p className="text-muted-foreground">{startDate} – {endDate} · Executive Task Overview</p>
         </div>
 
         <div className="flex flex-col items-end space-y-2">
-          <div className="w-full md:w-64 h-2 bg-zinc-100 rounded-full overflow-hidden flex">
+          <div className="w-full md:w-64 h-2 bg-muted rounded-full overflow-hidden flex">
             <div className="h-full bg-green-500" style={{ width: `${progress}%` }} />
           </div>
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Completion Progress: {Math.round(progress)}% ({done}/{total} Tasks)
           </span>
         </div>

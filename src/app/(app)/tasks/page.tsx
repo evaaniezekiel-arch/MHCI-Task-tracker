@@ -22,8 +22,8 @@ export default async function TasksPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-          <p className="text-zinc-500 mt-1">Manage and filter all your tasks across the entire calendar.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Tasks</h1>
+          <p className="text-muted-foreground mt-1">Manage and filter all your tasks across the entire calendar.</p>
         </div>
       </div>
 

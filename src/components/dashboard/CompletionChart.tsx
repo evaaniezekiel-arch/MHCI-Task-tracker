@@ -53,8 +53,8 @@ export default function CompletionChart({ data }: CompletionChartProps) {
       </ResponsiveContainer>
       
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-        <span className="text-3xl font-bold tracking-tighter">{percentage}%</span>
-        <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest">Complete</span>
+        <span className="text-3xl font-bold tracking-tighter text-foreground">{percentage}%</span>
+        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Complete</span>
       </div>
     </div>
   );

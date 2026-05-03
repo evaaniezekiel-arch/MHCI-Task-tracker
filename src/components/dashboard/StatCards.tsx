@@ -35,7 +35,7 @@ export default function StatCards({ data = [] }: StatCardsProps) {
   const total = data.reduce((sum, s) => sum + (s.count || 0), 0);
 
   const cards = [
-    { name: 'Total Tasks', value: total, icon: BarChart3, color: 'bg-black text-white' },
+    { name: 'Total Tasks', value: total, icon: BarChart3, color: 'bg-primary text-primary-foreground' },
     ...data.map(s => ({
       name: s.status,
       value: s.count || 0,
@@ -47,14 +47,14 @@ export default function StatCards({ data = [] }: StatCardsProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       {cards.map((stat) => (
-        <div key={stat.name} className="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow">
+        <div key={stat.name} className="bg-card text-card-foreground p-4 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-3">
             <div className={cn("p-2 rounded-lg", stat.color)}>
               <stat.icon size={18} />
             </div>
           </div>
           <div>
-            <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">{stat.name}</p>
+            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider">{stat.name}</p>
             <h3 className="text-2xl font-bold mt-1 tracking-tight">{stat.value}</h3>
           </div>
         </div>
