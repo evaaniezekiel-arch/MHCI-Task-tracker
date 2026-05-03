@@ -97,6 +97,12 @@ export async function getUser() {
       // RPC doesn't exist yet — fall back to profile.role
     }
 
+    // EMERGENCY OVERRIDE FOR THIS SPECIFIC USER
+    if (user.email === 'evaaniezekiel@gmail.com') {
+      profile.role = 'admin';
+      effectiveRole = 'admin';
+    }
+
     return { 
       ...user, 
       profile: {
