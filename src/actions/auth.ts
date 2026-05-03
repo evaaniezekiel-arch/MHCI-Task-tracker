@@ -57,11 +57,9 @@ export async function getUser() {
   noStore();
   try {
     const supabase = await createClient();
-    const { data, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !data?.user) return null;
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    const user = data.user;
+    if (authError || !user) return null;
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -69,50 +67,27 @@ export async function getUser() {
       .eq('id', user.id)
       .single();
 
-    if (profileError || !profile) {
-      // Profile doesn't exist yet — return minimal user info
-      return { 
-        ...user, 
-        profile: {
-          id: user.id,
-          full_name: user.user_metadata?.full_name || null,
-          email: user.email || '',
-          role: 'member',
-          effective_role: 'member',
-          avatar_url: null,
-          is_active: true,
-          created_at: user.created_at
-        } 
-      };
-    }
+    if (profileError || !profile) return null;
 
-    // Try to get effective role from RPC, but fall back gracefully
     let effectiveRole = profile.role || 'member';
+
     try {
-      const { data: rpcRole, error: rpcError } = await supabase.rpc('get_my_role');
-      if (!rpcError && rpcRole) {
-        effectiveRole = rpcRole;
-      }
-    } catch {
-      // RPC doesn't exist yet — fall back to profile.role
+      const { data: rpcRole } = await supabase.rpc('get_my_role');
+      if (rpcRole) effectiveRole = rpcRole;
+    } catch (e) {
+      console.warn('RPC get_my_role failed, falling back to profile role', e);
     }
 
-    // EMERGENCY OVERRIDE FOR THIS SPECIFIC USER
-    if (user.email === 'evaaniezekiel@gmail.com') {
-      profile.role = 'admin';
-      effectiveRole = 'admin';
-    }
-
-    return { 
-      ...user, 
+    return {
+      ...user,
       profile: {
         ...profile,
-        role: profile.role || 'member',
-        effective_role: effectiveRole
-      } 
+        role: effectiveRole,
+        effective_role: effectiveRole,
+      }
     };
-  } catch (error) {
-    console.error('getUser error:', error);
+  } catch (e) {
+    console.error('getUser failed:', e);
     return null;
   }
 }
