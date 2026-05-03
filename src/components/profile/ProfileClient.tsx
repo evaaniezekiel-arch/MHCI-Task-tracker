@@ -59,6 +59,12 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
+      {/* TEMPORARY DEBUG BLOCK */}
+      <div className="bg-red-50 text-red-900 p-4 rounded-xl text-xs font-mono overflow-x-auto border border-red-200">
+        <strong>Debug Info:</strong>
+        <pre>{JSON.stringify(profile, null, 2)}</pre>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
