@@ -44,12 +44,20 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
-  return { success: true };
+  // Email confirmation required — tell the UI to show a "check your email" message
+  if (!data.session) {
+    return { success: true, confirmEmail: true };
+  }
+
+  // Auto-confirmed (email confirmation disabled in Supabase)
+  revalidatePath('/', 'layout');
+  redirect('/dashboard');
 }
 
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  revalidatePath('/', 'layout'); // Bust stale role/session cache
   redirect('/login');
 }
 
@@ -69,14 +77,7 @@ export async function getUser() {
 
     if (profileError || !profile) return null;
 
-    let effectiveRole = profile.role || 'member';
-
-    try {
-      const { data: rpcRole } = await supabase.rpc('get_my_role');
-      if (rpcRole) effectiveRole = rpcRole;
-    } catch (e) {
-      console.warn('RPC get_my_role failed, falling back to profile role', e);
-    }
+    const effectiveRole = profile.role || 'member';
 
     return {
       ...user,
