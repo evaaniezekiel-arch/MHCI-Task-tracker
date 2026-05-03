@@ -28,8 +28,8 @@ export default function CompletionChart({ data }: CompletionChartProps) {
   const percentage = total > 0 ? Math.round((Number(doneCount) / total) * 100) : 0;
 
   return (
-    <div className="h-full w-full relative">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-full w-full min-h-[250px] relative">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <PieChart>
           <Pie
             data={data}

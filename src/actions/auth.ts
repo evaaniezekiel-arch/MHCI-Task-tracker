@@ -75,7 +75,21 @@ export async function getUser() {
       .eq('id', user.id)
       .single();
 
-    if (profileError || !profile) return null;
+    if (profileError || !profile) {
+      // Return a basic profile based on auth user data if DB row is missing
+      return {
+        ...user,
+        profile: {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || 'Guest',
+          email: user.email || '',
+          role: 'member',
+          effective_role: 'member',
+          avatar_url: null,
+          created_at: user.created_at
+        }
+      };
+    }
 
     const effectiveRole = profile.role || 'member';
 

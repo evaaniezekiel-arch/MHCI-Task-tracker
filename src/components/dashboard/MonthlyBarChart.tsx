@@ -18,8 +18,8 @@ interface MonthlyBarChartProps {
 
 export default function MonthlyBarChart({ data }: MonthlyBarChartProps) {
   return (
-    <div className="h-full w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-full w-full min-h-[250px]">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <BarChart
           data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
