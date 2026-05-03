@@ -34,8 +34,13 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
     
     try {
-      await updateTaskStatus(taskId, newStatus);
-      toast.success('Status updated');
+      const result = await updateTaskStatus(taskId, newStatus);
+      if (result?.error) {
+        toast.error(result.error);
+        setTasks(initialTasks); // Rollback
+      } else {
+        toast.success('Status updated');
+      }
     } catch (error) {
       toast.error('Failed to update status');
       setTasks(initialTasks); // Rollback
@@ -47,10 +52,14 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
     if (!newTitle.trim()) return;
 
     try {
-      await createTask(weekId, newTitle);
-      setNewTitle('');
-      setIsAdding(false);
-      toast.success('Task added');
+      const result = await createTask(weekId, newTitle);
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        setNewTitle('');
+        setIsAdding(false);
+        toast.success('Task added');
+      }
     } catch (error) {
       toast.error('Failed to add task');
     }
@@ -64,8 +73,13 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
     setTasks(prev => prev.filter(t => t.id !== taskId));
     
     try {
-      await deleteTask(taskId);
-      toast.success('Task deleted');
+      const result = await deleteTask(taskId);
+      if (result?.error) {
+        toast.error(result.error);
+        setTasks(originalTasks); // Rollback
+      } else {
+        toast.success('Task deleted');
+      }
     } catch (error) {
       toast.error('Failed to delete task');
       setTasks(originalTasks); // Rollback

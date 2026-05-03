@@ -45,7 +45,26 @@ export async function createWeek(weekNumber: number, startDate: string, endDate:
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) {
+    return { error: 'You must be logged in to create a week.' };
+  }
+
+  // Ensure profile exists (RLS depends on it)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) {
+    // Profile row is missing — create it so RLS get_my_role() works
+    await supabase.from('profiles').upsert({
+      id: user.id,
+      email: user.email,
+      full_name: user.user_metadata?.full_name || 'Admin User',
+      role: 'admin',
+    });
+  }
 
   const { data, error } = await supabase
     .from('weeks')
@@ -59,8 +78,12 @@ export async function createWeek(weekNumber: number, startDate: string, endDate:
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('createWeek error:', error);
+    return { error: error.message || 'Failed to create week.' };
+  }
 
   revalidatePath('/tasks');
-  return data;
+  revalidatePath('/dashboard');
+  return { data };
 }

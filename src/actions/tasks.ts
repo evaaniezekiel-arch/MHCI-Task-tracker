@@ -41,7 +41,23 @@ export async function createTask(weekId: string, title: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) return { error: 'You must be logged in to create a task.' };
+
+  // Ensure profile exists (RLS depends on it)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) {
+    await supabase.from('profiles').upsert({
+      id: user.id,
+      email: user.email,
+      full_name: user.user_metadata?.full_name || 'Admin User',
+      role: 'admin',
+    });
+  }
 
   const { data, error } = await supabase
     .from('tasks')
@@ -52,23 +68,26 @@ export async function createTask(weekId: string, title: string) {
       updated_by: user.id,
       status: 'Pending',
       priority: 'Medium',
-      position: 0 // In real app, calculate based on existing tasks
+      position: 0
     })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('createTask error:', error);
+    return { error: error.message || 'Failed to create task.' };
+  }
 
   revalidatePath(`/week/${weekId}`);
   revalidatePath('/tasks');
-  return data;
+  return { data };
 }
 
 export async function updateTask(taskId: string, updates: Partial<Task>) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) return { error: 'You must be logged in to update a task.' };
 
   const { data, error } = await supabase
     .from('tasks')
@@ -81,10 +100,13 @@ export async function updateTask(taskId: string, updates: Partial<Task>) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('updateTask error:', error);
+    return { error: error.message || 'Failed to update task.' };
+  }
 
   revalidatePath('/tasks');
-  return data;
+  return { data };
 }
 
 export async function deleteTask(taskId: string) {
@@ -94,9 +116,14 @@ export async function deleteTask(taskId: string) {
     .delete()
     .eq('id', taskId);
 
-  if (error) throw error;
+  if (error) {
+    console.error('deleteTask error:', error);
+    return { error: error.message || 'Failed to delete task.' };
+  }
+
   revalidatePath('/dashboard');
   revalidatePath('/tasks');
+  return { success: true };
 }
 
 export async function updateTaskStatus(taskId: string, status: Status) {

@@ -86,13 +86,18 @@ export default function GlobalTaskView({ initialTasks, weeks }: { initialTasks: 
     sunday.setDate(monday.getDate() + 6);
 
     try {
-      await createWeek(
+      const result = await createWeek(
         nextNum,
         monday.toISOString().split('T')[0],
         sunday.toISOString().split('T')[0],
         today.getFullYear()
       );
-      toast.success(`Week ${nextNum} created`);
+
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`Week ${nextNum} created`);
+      }
     } catch (error: any) {
       toast.error(error?.message || 'Failed to create week');
     }
