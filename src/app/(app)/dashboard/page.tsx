@@ -8,11 +8,19 @@ import { getOverallStats, getMonthlyPerformance, getWeeklyTrend } from '@/action
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const [stats, monthlyData, weeklyTrend] = await Promise.all([
-    getOverallStats(),
-    getMonthlyPerformance(),
-    getWeeklyTrend()
-  ]);
+  let stats: any[] = [];
+  let monthlyData: any[] = [];
+  let weeklyTrend: any[] = [];
+
+  try {
+    [stats, monthlyData, weeklyTrend] = await Promise.all([
+      getOverallStats(),
+      getMonthlyPerformance(),
+      getWeeklyTrend()
+    ]);
+  } catch (error) {
+    console.error('Dashboard data fetch error:', error);
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -61,14 +69,14 @@ export default async function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {monthlyData.map((m: any) => (
-                    <tr key={m.month} className="hover:bg-zinc-50 transition-colors">
+                  {monthlyData.map((m: any, idx: number) => (
+                    <tr key={idx} className="hover:bg-zinc-50 transition-colors">
                       <td className="px-4 py-3 font-medium">{typeof m.month === 'string' ? m.month.trim() : m.month}</td>
-                      <td className="px-4 py-3">{m.total}</td>
-                      <td className="px-4 py-3 text-green-600 font-bold">{m.done}</td>
+                      <td className="px-4 py-3">{m.total || 0}</td>
+                      <td className="px-4 py-3 text-green-600 font-bold">{m.done || 0}</td>
                       <td className="px-4 py-3">
                         <span className="text-[10px] font-bold bg-zinc-100 px-1.5 py-0.5 rounded">
-                          {m.total > 0 ? Math.round((m.done / m.total) * 100) : 0}%
+                          {(m.total || 0) > 0 ? Math.round(((m.done || 0) / m.total) * 100) : 0}%
                         </span>
                       </td>
                     </tr>

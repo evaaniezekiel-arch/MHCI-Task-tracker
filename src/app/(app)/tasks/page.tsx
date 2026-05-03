@@ -6,10 +6,17 @@ import GlobalTaskView from '@/components/tasks/GlobalTaskView';
 export const dynamic = 'force-dynamic';
 
 export default async function TasksPage() {
-  const [tasks, weeks] = await Promise.all([
-    getAllTasks(),
-    getWeeks() // Fetch ALL weeks, not just current year
-  ]);
+  let tasks: any[] = [];
+  let weeks: any[] = [];
+
+  try {
+    [tasks, weeks] = await Promise.all([
+      getAllTasks(),
+      getWeeks()
+    ]);
+  } catch (error) {
+    console.error('Tasks page data fetch error:', error);
+  }
 
   return (
     <div className="space-y-6">

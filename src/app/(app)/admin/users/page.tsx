@@ -3,8 +3,16 @@ import { UserPlus } from 'lucide-react';
 import { getUsers } from '@/actions/users';
 import UsersTable from '@/components/admin/UsersTable';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminUsersPage() {
-  const users = await getUsers();
+  let users: any[] = [];
+  
+  try {
+    users = await getUsers();
+  } catch (error) {
+    console.error('Admin users fetch error:', error);
+  }
 
   return (
     <div className="space-y-6">
@@ -19,7 +27,7 @@ export default async function AdminUsersPage() {
         </button>
       </div>
 
-      <UsersTable initialUsers={users} />
+      <UsersTable initialUsers={users || []} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm">
