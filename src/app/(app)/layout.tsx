@@ -4,6 +4,9 @@ import Navbar from '@/components/layout/Navbar';
 import { getWeeks } from '@/actions/weeks';
 import { getUser } from '@/actions/auth';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AppLayout({
   children,
 }: {
