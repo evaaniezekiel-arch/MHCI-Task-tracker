@@ -24,6 +24,6 @@ export async function updateMyProfile(formData: FormData) {
     return { error: error.message };
   }
 
-  revalidatePath('/profile');
+  revalidatePath('/', 'layout');
   return { success: true };
 }

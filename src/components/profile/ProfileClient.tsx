@@ -5,6 +5,7 @@ import { User, Mail, Shield, Camera, Loader2, Pencil, X, Check } from 'lucide-re
 import { updateMyProfile } from '@/actions/profile';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface ProfileClientProps {
   profile: {
@@ -18,13 +19,15 @@ interface ProfileClientProps {
 }
 
 export default function ProfileClient({ profile }: ProfileClientProps) {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fullName, setFullName] = useState(profile.full_name || '');
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
 
   const displayRole = profile.effective_role || profile.role || 'member';
-  const initials = (profile.full_name || profile.email || 'G')
+  const displayFullName = fullName || profile.full_name || 'Set your name';
+  const initials = (displayFullName || profile.email || 'G')
     .split(' ')
     .map((n: string) => n[0])
     .join('')
@@ -43,6 +46,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
     } else {
       toast.success('Profile updated successfully');
       setIsEditing(false);
+      router.refresh();
     }
     setIsLoading(false);
   }
@@ -94,8 +98,8 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
         <div className="h-36 bg-gradient-to-br from-black via-zinc-800 to-zinc-900 relative">
           <div className="absolute -bottom-14 left-8 p-1.5 bg-white rounded-full shadow-lg">
             <div className="w-28 h-28 rounded-full bg-zinc-100 border-4 border-white flex items-center justify-center text-3xl font-bold text-zinc-300 overflow-hidden relative group">
-              {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-zinc-400">{initials}</span>
               )}
@@ -113,7 +117,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
           {/* Header row */}
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-bold">{profile.full_name || 'Set your name'}</h2>
+              <h2 className="text-2xl font-bold">{displayFullName}</h2>
               <p className="text-sm text-zinc-500 mt-0.5">{profile.email}</p>
               {profile.created_at && (
                 <p className="text-xs text-zinc-400 mt-1">
@@ -151,7 +155,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                 />
               ) : (
                 <p className="p-4 bg-zinc-50 rounded-2xl text-sm font-medium">
-                  {profile.full_name || <span className="text-zinc-400 italic">Not set</span>}
+                  {displayFullName || <span className="text-zinc-400 italic">Not set</span>}
                 </p>
               )}
             </div>
