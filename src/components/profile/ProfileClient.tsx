@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { User, Mail, Shield, Camera, Loader2, Pencil, X, Check } from 'lucide-react';
 import { updateMyProfile } from '@/actions/profile';
 import toast from 'react-hot-toast';
@@ -20,10 +20,12 @@ interface ProfileClientProps {
 
 export default function ProfileClient({ profile }: ProfileClientProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fullName, setFullName] = useState(profile.full_name || '');
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
+  const [avatarPreview, setAvatarPreview] = useState(profile.avatar_url || '');
 
   const displayRole = profile.effective_role || profile.role || 'member';
   const displayFullName = fullName || profile.full_name || 'Set your name';
@@ -33,6 +35,17 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
     .join('')
     .substring(0, 2)
     .toUpperCase();
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Preview locally while editing
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarPreview(objectUrl);
+    // TODO: upload to Supabase Storage here and set the real URL
+    // const uploadedUrl = await uploadAvatar(file);
+    // setAvatarUrl(uploadedUrl);
+  }
 
   async function handleSave() {
     setIsLoading(true);
@@ -54,17 +67,12 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
   function handleCancel() {
     setFullName(profile.full_name || '');
     setAvatarUrl(profile.avatar_url || '');
+    setAvatarPreview(profile.avatar_url || '');
     setIsEditing(false);
   }
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      {/* TEMPORARY DEBUG BLOCK */}
-      <div className="bg-red-50 text-red-900 p-4 rounded-xl text-xs font-mono overflow-x-auto border border-red-200">
-        <strong>Debug Info:</strong>
-        <pre>{JSON.stringify(profile, null, 2)}</pre>
-      </div>
-
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
@@ -103,14 +111,28 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
         {/* Banner */}
         <div className="h-36 bg-gradient-to-br from-black via-zinc-800 to-zinc-900 relative">
           <div className="absolute -bottom-14 left-8 p-1.5 bg-white rounded-full shadow-lg">
-            <div className="w-28 h-28 rounded-full bg-zinc-100 border-4 border-white flex items-center justify-center text-3xl font-bold text-zinc-300 overflow-hidden relative group">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
+            <div
+              onClick={() => isEditing && fileInputRef.current?.click()}
+              className={cn(
+                "w-28 h-28 rounded-full bg-zinc-100 border-4 border-white flex items-center justify-center text-3xl font-bold text-zinc-300 overflow-hidden relative group",
+                isEditing && "cursor-pointer"
+              )}
+            >
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-zinc-400">{initials}</span>
               )}
               {isEditing && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <Camera className="text-white" size={20} />
                 </div>
               )}
@@ -120,7 +142,6 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
 
         {/* Profile Info */}
         <div className="pt-20 pb-8 px-8 space-y-8">
-          {/* Header row */}
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-bold">{displayFullName}</h2>
@@ -140,10 +161,8 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
             </span>
           </div>
 
-          {/* Divider */}
           <div className="border-t border-zinc-100" />
 
-          {/* Detail fields */}
           <div className="grid grid-cols-1 gap-6">
             {/* Full Name */}
             <div className="space-y-2">
@@ -152,11 +171,11 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                 Full Name
               </label>
               {isEditing ? (
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name" 
+                  placeholder="Enter your full name"
                   className="w-full p-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm"
                 />
               ) : (
