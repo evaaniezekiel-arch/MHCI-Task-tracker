@@ -9,7 +9,7 @@ export async function getTasksByWeek(weekId: string) {
   
   const { data, error } = await supabase
     .from('tasks')
-    .select('*, task_assignees(*, profiles(*))')
+    .select('*, task_assignees(*, user:user_id(*))')
     .eq('week_id', weekId)
     .order('position', { ascending: true });
 
@@ -26,7 +26,7 @@ export async function getAllTasks() {
   
   const { data, error } = await supabase
     .from('tasks')
-    .select('*, weeks(*), task_assignees(*, profiles(*))')
+    .select('*, weeks(*), task_assignees(*, user:user_id(*))')
     .order('created_at', { ascending: false });
 
   if (error) {

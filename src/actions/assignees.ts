@@ -16,7 +16,7 @@ export async function addAssignee(taskId: string, userId: string) {
       user_id: userId,
       assigned_by: user.id
     })
-    .select('*, profiles(*)')
+    .select('*, user:user_id(*)')
     .single();
 
   if (error) throw error;
