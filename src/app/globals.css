@@ -97,11 +97,23 @@
   --border: #333333;
   --input: #333333;
   --ring: #ffffff;
+
+  /* Status Colors (Dark Mode) */
+  --status-done-bg: #064e3b;
+  --status-done-text: #6ee7b7;
+  --status-progress-bg: #78350f;
+  --status-progress-text: #fcd34d;
+  --status-pending-bg: #1e3a8a;
+  --status-pending-text: #93c5fd;
+  --status-undone-bg: #7f1d1d;
+  --status-undone-text: #fca5a5;
+  --status-kiv-bg: #4c1d95;
+  --status-kiv-text: #c4b5fd;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-200;
   }
   body {
     @apply bg-background text-foreground;

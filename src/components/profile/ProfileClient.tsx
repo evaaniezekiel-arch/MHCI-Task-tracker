@@ -75,13 +75,13 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
     <div className="max-w-2xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
-          <p className="text-zinc-500 mt-1">View and manage your personal information.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Your Profile</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">View and manage your personal information.</p>
         </div>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center space-x-2 bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg shadow-black/10 active:scale-95"
+            className="flex items-center space-x-2 bg-black dark:bg-white text-white dark:text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-lg shadow-black/10 active:scale-95"
           >
             <Pencil size={16} />
             <span>Edit Profile</span>
@@ -90,7 +90,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
           <div className="flex items-center space-x-2">
             <button
               onClick={handleCancel}
-              className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-sm font-bold border border-zinc-200 hover:bg-zinc-50 transition-all"
+              className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-sm font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
             >
               <X size={16} />
               <span>Cancel</span>
@@ -98,7 +98,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
             <button
               onClick={handleSave}
               disabled={isLoading}
-              className="flex items-center space-x-1.5 bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg shadow-black/10 active:scale-95 disabled:opacity-50"
+              className="flex items-center space-x-1.5 bg-black dark:bg-white text-white dark:text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-lg shadow-black/10 active:scale-95 disabled:opacity-50"
             >
               {isLoading ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
               <span>{isLoading ? 'Saving...' : 'Save Changes'}</span>
@@ -107,10 +107,10 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
         )}
       </div>
 
-      <div className="bg-white rounded-3xl border border-zinc-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden transition-colors">
         {/* Banner */}
-        <div className="h-36 bg-gradient-to-br from-black via-zinc-800 to-zinc-900 relative">
-          <div className="absolute -bottom-14 left-8 p-1.5 bg-white rounded-full shadow-lg">
+        <div className="h-36 bg-gradient-to-br from-black via-zinc-800 to-zinc-900 dark:from-zinc-900 dark:via-black dark:to-zinc-950 relative">
+          <div className="absolute -bottom-14 left-8 p-1.5 bg-white dark:bg-zinc-900 rounded-full shadow-lg transition-colors">
             {/* Hidden file input */}
             <input
               ref={fileInputRef}
@@ -122,14 +122,14 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
             <div
               onClick={() => isEditing && fileInputRef.current?.click()}
               className={cn(
-                "w-28 h-28 rounded-full bg-zinc-100 border-4 border-white flex items-center justify-center text-3xl font-bold text-zinc-300 overflow-hidden relative group",
+                "w-28 h-28 rounded-full bg-zinc-100 dark:bg-zinc-800 border-4 border-white dark:border-zinc-900 flex items-center justify-center text-3xl font-bold text-zinc-300 dark:text-zinc-600 overflow-hidden relative group transition-all",
                 isEditing && "cursor-pointer"
               )}
             >
               {avatarPreview ? (
                 <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-zinc-400">{initials}</span>
+                <span className="text-zinc-400 dark:text-zinc-500">{initials}</span>
               )}
               {isEditing && (
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -144,29 +144,29 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
         <div className="pt-20 pb-8 px-8 space-y-8">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-bold">{displayFullName}</h2>
-              <p className="text-sm text-zinc-500 mt-0.5">{profile.email}</p>
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{displayFullName}</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">{profile.email}</p>
               {profile.created_at && (
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
                   Member since {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </p>
               )}
             </div>
             <span className={cn(
-              "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border",
-              displayRole === 'admin' ? "bg-black text-white border-black" : "bg-zinc-50 text-zinc-600 border-zinc-100"
+              "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-colors",
+              displayRole === 'admin' ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white" : "bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-100 dark:border-zinc-700"
             )}>
               <Shield size={10} className="inline-block mr-1 -mt-0.5" />
               {displayRole === 'member' ? 'user' : displayRole}
             </span>
           </div>
 
-          <div className="border-t border-zinc-100" />
+          <div className="border-t border-zinc-100 dark:border-zinc-800" />
 
           <div className="grid grid-cols-1 gap-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center">
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center">
                 <User size={12} className="mr-1.5" />
                 Full Name
               </label>
@@ -176,41 +176,41 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full p-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm"
+                  className="w-full p-4 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                 />
               ) : (
-                <p className="p-4 bg-zinc-50 rounded-2xl text-sm font-medium">
-                  {displayFullName || <span className="text-zinc-400 italic">Not set</span>}
+                <p className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  {displayFullName || <span className="text-zinc-400 dark:text-zinc-500 italic">Not set</span>}
                 </p>
               )}
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center">
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center">
                 <Mail size={12} className="mr-1.5" />
                 Email Address
               </label>
-              <p className="p-4 bg-zinc-50 rounded-2xl text-sm font-medium text-zinc-600">
+              <p className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl text-sm font-medium text-zinc-600 dark:text-zinc-400">
                 {profile.email}
               </p>
-              <p className="text-[10px] text-zinc-400 font-medium">Email cannot be changed for security reasons.</p>
+              <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">Email cannot be changed for security reasons.</p>
             </div>
 
             {/* Role */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center">
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center">
                 <Shield size={12} className="mr-1.5" />
                 Account Role
               </label>
-              <p className="p-4 bg-zinc-50 rounded-2xl text-sm font-medium capitalize">
-                {displayRole === 'member' ? 'User' : displayRole}
+              <div className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl text-sm font-medium capitalize text-zinc-900 dark:text-zinc-100 flex items-center justify-between">
+                <span>{displayRole === 'member' ? 'User' : displayRole}</span>
                 {displayRole === 'admin' && (
-                  <span className="ml-2 text-[10px] bg-black text-white px-2 py-0.5 rounded-full uppercase font-bold">
+                  <span className="text-[10px] bg-black dark:bg-white text-white dark:text-black px-2 py-0.5 rounded-full uppercase font-bold tracking-tighter shadow-sm">
                     Full Access
                   </span>
                 )}
-              </p>
+              </div>
             </div>
           </div>
         </div>

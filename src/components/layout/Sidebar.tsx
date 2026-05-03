@@ -36,15 +36,15 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
   return (
     <aside 
       className={cn(
-        "bg-black text-white h-screen transition-all duration-300 flex flex-col fixed left-0 top-0 z-40",
+        "bg-black dark:bg-zinc-950 text-white h-screen transition-all duration-300 flex flex-col fixed left-0 top-0 z-40 border-r border-zinc-900 dark:border-zinc-800",
         collapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="p-4 flex items-center justify-between border-b border-zinc-900">
+      <div className="p-4 flex items-center justify-between border-b border-zinc-900 dark:border-zinc-800">
         {!collapsed && <span className="font-bold text-lg tracking-tight">MHCI TASK</span>}
         <button 
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1 hover:bg-zinc-800 rounded"
+          className="p-1 hover:bg-zinc-800 rounded transition-colors"
         >
           {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -58,26 +58,26 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center p-3 rounded-lg transition-colors group",
-                isActive ? "bg-white text-black font-bold" : "hover:bg-zinc-900 text-zinc-400",
+                "flex items-center p-3 rounded-lg transition-all group",
+                isActive 
+                  ? "bg-white text-black dark:bg-zinc-100 dark:text-black font-bold shadow-lg shadow-white/5" 
+                  : "hover:bg-zinc-900 dark:hover:bg-zinc-900 text-zinc-400 hover:text-white",
                 collapsed ? "justify-center" : "space-x-3"
               )}
             >
-              <item.icon size={20} />
+              <item.icon size={20} className={cn("transition-transform group-hover:scale-110", isActive && "scale-110")} />
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
         })}
-
-
       </div>
 
-      <div className="p-4 border-t border-zinc-900">
+      <div className="p-4 border-t border-zinc-900 dark:border-zinc-800">
         <form action={logout}>
           <button 
             type="submit"
             className={cn(
-              "flex items-center text-zinc-500 hover:text-white transition-colors w-full p-2 group",
+              "flex items-center text-zinc-500 hover:text-white transition-all w-full p-2 group rounded-lg hover:bg-zinc-900/50",
               collapsed ? "justify-center" : "space-x-3"
             )}
           >
