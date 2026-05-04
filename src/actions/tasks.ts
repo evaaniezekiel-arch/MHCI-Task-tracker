@@ -37,7 +37,13 @@ export async function getAllTasks() {
   return data;
 }
 
-export async function createTask(weekId: string, title: string) {
+export async function createTask(
+  weekId: string, 
+  title: string, 
+  description?: string, 
+  dueDate?: string, 
+  priority?: Priority
+) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -51,10 +57,12 @@ export async function createTask(weekId: string, title: string) {
     .insert({
       week_id: weekId,
       title,
+      description: description || null,
+      due_date: dueDate || null,
       created_by: user.id,
       updated_by: user.id,
       status: 'Pending',
-      priority: 'Medium',
+      priority: priority || 'Medium',
       position: 0
     })
     .select()
