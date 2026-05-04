@@ -91,7 +91,7 @@ export async function getUser() {
       };
     }
 
-    const effectiveRole = profile.role || 'member';
+    const effectiveRole = profile.role || 'admin';
 
     return {
       ...user,

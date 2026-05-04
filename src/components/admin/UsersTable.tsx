@@ -1,37 +1,54 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Mail, Shield, Clock, MoreVertical, Check, X } from 'lucide-react';
+import { Mail, Shield, Clock, MoreVertical, Crown, UserCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { promoteToAdmin, revokeTemporaryAdmin } from '@/actions/users';
+import { updateUserRole, promoteToAdmin, revokeTemporaryAdmin } from '@/actions/users';
 import toast from 'react-hot-toast';
 
 interface UsersTableProps {
   initialUsers: any[];
 }
 
+const ROLE_CONFIG: Record<string, { label: string; icon: any; class: string }> = {
+  admin: { label: 'Admin', icon: Shield, class: 'bg-primary text-primary-foreground' },
+  executive: { label: 'Executive', icon: Crown, class: 'bg-amber-500/10 text-amber-500' },
+  assistant: { label: 'Assistant', icon: UserCheck, class: 'bg-blue-500/10 text-blue-500' },
+};
+
 export default function UsersTable({ initialUsers }: UsersTableProps) {
   const [users, setUsers] = useState(initialUsers);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const handlePromote = async (userId: string, hours: number) => {
-    try {
-      await promoteToAdmin(userId, hours);
-      toast.success(`Promoted to Admin for ${hours} hours`);
-      setOpenDropdown(null);
-    } catch (error) {
-      toast.error('Failed to promote user');
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    const result = await updateUserRole(userId, newRole as any);
+    if (result?.error) {
+      toast.error(result.error);
+    } else {
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+      toast.success(`Role updated to ${ROLE_CONFIG[newRole]?.label || newRole}`);
     }
+    setOpenDropdown(null);
+  };
+
+  const handlePromote = async (userId: string, hours: number) => {
+    const result = await promoteToAdmin(userId, hours);
+    if (result?.error) {
+      toast.error(result.error);
+    } else {
+      toast.success(`Promoted to Admin for ${hours} hours`);
+    }
+    setOpenDropdown(null);
   };
 
   const handleRevoke = async (userId: string) => {
-    try {
-      await revokeTemporaryAdmin(userId);
+    const result = await revokeTemporaryAdmin(userId);
+    if (result?.error) {
+      toast.error(result.error);
+    } else {
       toast.success('Admin status revoked');
-      setOpenDropdown(null);
-    } catch (error) {
-      toast.error('Failed to revoke status');
     }
+    setOpenDropdown(null);
   };
 
   return (
@@ -52,6 +69,8 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
               const isTempAdmin = user.role !== 'admin' && 
                                  user.temporary_admin_until && 
                                  new Date(user.temporary_admin_until) > new Date();
+              const roleConfig = ROLE_CONFIG[user.role] || ROLE_CONFIG.assistant;
+              const RoleIcon = roleConfig.icon;
 
               return (
                 <tr key={user.id} className="hover:bg-muted/50 transition-colors group relative">
@@ -72,10 +91,10 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                   <td className="px-6 py-4">
                     <span className={cn(
                       "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center w-fit",
-                      (user.role === 'admin' || isTempAdmin) ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                      isTempAdmin ? ROLE_CONFIG.admin.class : roleConfig.class
                     )}>
-                      {(user.role === 'admin' || isTempAdmin) && <Shield size={10} className="mr-1" />}
-                      {isTempAdmin ? 'Temp Admin' : (user.role === 'member' ? 'user' : user.role)}
+                      <RoleIcon size={10} className="mr-1" />
+                      {isTempAdmin ? 'Temp Admin' : roleConfig.label}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -85,7 +104,7 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                         <span>Expires {new Date(user.temporary_admin_until).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground/40 text-[10px] uppercase font-bold">Permanent</span>
+                      <span className="text-muted-foreground/40 text-[10px] uppercase font-bold">—</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-muted-foreground text-xs">
@@ -100,23 +119,46 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                     </button>
 
                     {openDropdown === user.id && (
-                      <div className="absolute right-6 top-12 w-48 bg-popover text-popover-foreground border border-border shadow-xl rounded-xl z-50 overflow-hidden py-1">
-                        <div className="px-3 py-2 text-[10px] font-bold uppercase text-muted-foreground tracking-widest border-b border-border">Promote (Hours)</div>
-                        {[1, 2, 3, 5, 6].map(h => (
-                          <button 
-                            key={h}
-                            onClick={() => handlePromote(user.id, h)}
-                            className="w-full text-left px-4 py-2 hover:bg-muted text-xs font-medium transition-colors flex justify-between items-center"
+                      <div className="absolute right-6 top-12 w-52 bg-popover text-popover-foreground border border-border shadow-xl rounded-xl z-50 overflow-hidden py-1">
+                        {/* Role Change Section */}
+                        <div className="px-3 py-2 text-[10px] font-bold uppercase text-muted-foreground tracking-widest border-b border-border">Change Role</div>
+                        {Object.entries(ROLE_CONFIG).map(([key, config]) => (
+                          <button
+                            key={key}
+                            onClick={() => handleRoleChange(user.id, key)}
+                            className={cn(
+                              "w-full text-left px-4 py-2 hover:bg-muted text-xs font-medium transition-colors flex items-center gap-2",
+                              user.role === key && "bg-muted/50"
+                            )}
                           >
-                            <span>{h} Hour{h > 1 ? 's' : ''}</span>
+                            <config.icon size={12} />
+                            <span>{config.label}</span>
+                            {user.role === key && <span className="ml-auto text-green-500">✓</span>}
                           </button>
                         ))}
+
+                        {/* Temp Promote Section */}
+                        {user.role !== 'admin' && (
+                          <>
+                            <div className="px-3 py-2 text-[10px] font-bold uppercase text-muted-foreground tracking-widest border-t border-b border-border mt-1">Temp Promote (Hours)</div>
+                            {[1, 2, 3, 5, 6].map(h => (
+                              <button 
+                                key={h}
+                                onClick={() => handlePromote(user.id, h)}
+                                className="w-full text-left px-4 py-2 hover:bg-muted text-xs font-medium transition-colors"
+                              >
+                                {h} Hour{h > 1 ? 's' : ''}
+                              </button>
+                            ))}
+                          </>
+                        )}
+
                         {isTempAdmin && (
                           <button 
                             onClick={() => handleRevoke(user.id)}
                             className="w-full text-left px-4 py-2 hover:bg-destructive/10 text-red-600 dark:text-red-400 text-xs font-bold transition-colors border-t border-border mt-1"
                           >
-                            Revoke Status
+                            Revoke Temp Status
                           </button>
                         )}
                       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Shield, Crown, UserCheck } from 'lucide-react';
 import { getUsers } from '@/actions/users';
 import UsersTable from '@/components/admin/UsersTable';
 
@@ -19,7 +19,7 @@ export default async function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">User Management</h1>
-          <p className="text-muted-foreground mt-1">Manage platform access, roles, and temporary admin promotions.</p>
+          <p className="text-muted-foreground mt-1">Manage platform access and role assignments.</p>
         </div>
         <button className="flex items-center space-x-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg active:scale-95">
           <UserPlus size={18} />
@@ -29,21 +29,39 @@ export default async function AdminUsersPage() {
 
       <UsersTable initialUsers={users || []} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm">
-          <h3 className="font-bold mb-4 flex items-center text-sm uppercase tracking-widest text-muted-foreground">
-            Platform Roles
-          </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 rounded-xl border border-border">
-              <span className="font-bold">Admin</span>
-              <span className="text-xs text-muted-foreground text-right">Full access. Can add tasks, manage users, and view analytics.</span>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-primary text-primary-foreground">
+              <Shield size={16} />
             </div>
-            <div className="flex justify-between items-center p-3 rounded-xl border border-border">
-              <span className="font-bold">User</span>
-              <span className="text-xs text-muted-foreground text-right">Standard access. Restricted to filling and updating tasks assigned to them.</span>
-            </div>
+            <h3 className="font-bold">Admin</h3>
           </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Full access. Can create weeks and tasks, manage users, change roles, and view all analytics.
+          </p>
+        </div>
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+              <Crown size={16} />
+            </div>
+            <h3 className="font-bold">Executive</h3>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Can create weeks and tasks, assign responsibilities, and view analytics. Cannot manage user roles.
+          </p>
+        </div>
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+              <UserCheck size={16} />
+            </div>
+            <h3 className="font-bold">Assistant</h3>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Can view tasks and update task status. Cannot create weeks, tasks, or manage users.
+          </p>
         </div>
       </div>
     </div>

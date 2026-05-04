@@ -29,7 +29,7 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
     { name: 'Tasks', icon: ListTodo, href: '/tasks' },
   ];
 
-  if (role === 'admin') {
+  if (role === 'admin' || role === 'executive') {
     navItems.push({ name: 'User Mgmt', icon: Settings, href: '/admin/users' });
   }
 

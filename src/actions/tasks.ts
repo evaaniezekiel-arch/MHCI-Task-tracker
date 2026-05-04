@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { Task, Status, Priority } from '@/lib/types';
 
@@ -43,23 +43,10 @@ export async function createTask(weekId: string, title: string) {
 
   if (!user) return { error: 'You must be logged in to create a task.' };
 
-  // Ensure profile exists (RLS depends on it)
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('id', user.id)
-    .single();
+  // Use admin client to bypass RLS
+  const admin = createAdminClient();
 
-  if (!profile) {
-    await supabase.from('profiles').upsert({
-      id: user.id,
-      email: user.email,
-      full_name: user.user_metadata?.full_name || 'Admin User',
-      role: 'admin',
-    });
-  }
-
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('tasks')
     .insert({
       week_id: weekId,
@@ -89,7 +76,10 @@ export async function updateTask(taskId: string, updates: Partial<Task>) {
 
   if (!user) return { error: 'You must be logged in to update a task.' };
 
-  const { data, error } = await supabase
+  // Use admin client to bypass RLS
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
     .from('tasks')
     .update({
       ...updates,
@@ -110,8 +100,9 @@ export async function updateTask(taskId: string, updates: Partial<Task>) {
 }
 
 export async function deleteTask(taskId: string) {
-  const supabase = await createClient();
-  const { error } = await supabase
+  const admin = createAdminClient();
+
+  const { error } = await admin
     .from('tasks')
     .delete()
     .eq('id', taskId);

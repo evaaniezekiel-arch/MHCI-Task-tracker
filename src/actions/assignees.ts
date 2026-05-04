@@ -1,15 +1,17 @@
 "use server";
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function addAssignee(taskId: string, userId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) return { error: 'Unauthorized' };
 
-  const { data, error } = await supabase
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
     .from('task_assignees')
     .insert({
       task_id: taskId,
@@ -19,19 +21,21 @@ export async function addAssignee(taskId: string, userId: string) {
     .select('*, user:user_id(*)')
     .single();
 
-  if (error) throw error;
+  if (error) return { error: error.message };
 
-  return data;
+  return { data };
 }
 
 export async function inviteExternalAssignee(taskId: string, email: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) throw new Error('Unauthorized');
+  if (!user) return { error: 'Unauthorized' };
+
+  const admin = createAdminClient();
 
   // Check if user already exists
-  const { data: existingUser } = await supabase
+  const { data: existingUser } = await admin
     .from('profiles')
     .select('id')
     .eq('email', email)
@@ -44,7 +48,7 @@ export async function inviteExternalAssignee(taskId: string, email: string) {
   // Create pending invite record
   const inviteToken = crypto.randomUUID();
   
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('task_assignees')
     .insert({
       task_id: taskId,
@@ -56,21 +60,19 @@ export async function inviteExternalAssignee(taskId: string, email: string) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) return { error: error.message };
 
-  // Trigger Edge Function for email (logic would go here or handled by Supabase Webhook)
-  // await supabase.functions.invoke('send-task-invite', { body: { taskId, email, inviteToken } });
-
-  return data;
+  return { data };
 }
 
 export async function removeAssignee(taskId: string, assigneeId: string) {
-  const supabase = await createClient();
+  const admin = createAdminClient();
   
-  const { error } = await supabase
+  const { error } = await admin
     .from('task_assignees')
     .delete()
     .eq('id', assigneeId);
 
-  if (error) throw error;
+  if (error) return { error: error.message };
+  return { success: true };
 }
