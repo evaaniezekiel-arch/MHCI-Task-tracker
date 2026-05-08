@@ -163,6 +163,7 @@ export async function bulkImportTasks(weekId: string, tasks: any[]) {
     status: (task.status as Status) || 'Pending',
     created_by: user.id,
     updated_by: user.id,
+    created_at: task.created_at || new Date().toISOString(),
     position: index
   }));
 

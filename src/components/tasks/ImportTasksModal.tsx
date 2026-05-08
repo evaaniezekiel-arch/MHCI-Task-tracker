@@ -44,7 +44,8 @@ export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTask
         description: row.Description || row.description || '',
         due_date: row.DueDate || row.due_date || row.Date || '',
         priority: row.Priority || row.priority || 'Medium',
-        status: row.Status || row.status || 'Pending'
+        status: row.Status || row.status || 'Pending',
+        created_at: row.CreatedAt || row.CreatedDate || row.created_at || null
       }));
       
       setPreviewData(mapped);
@@ -74,8 +75,8 @@ export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTask
 
   const downloadTemplate = () => {
     const template = [
-      { Title: 'Security Audit', Description: 'Review system logs', DueDate: '2024-05-15', Priority: 'Critical', Status: 'Pending' },
-      { Title: 'Budget Review', Description: 'Approve Q3 expenses', DueDate: '2024-05-16', Priority: 'High', Status: 'Pending' }
+      { Title: 'Security Audit', Description: 'Review system logs', DueDate: '2024-05-15', Priority: 'Critical', Status: 'Pending', CreatedAt: '2024-05-01' },
+      { Title: 'Budget Review', Description: 'Approve Q3 expenses', DueDate: '2024-05-16', Priority: 'High', Status: 'Pending', CreatedAt: '2024-05-02' }
     ];
     const ws = XLSX.utils.json_to_sheet(template);
     const wb = XLSX.utils.book_new();
