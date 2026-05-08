@@ -196,14 +196,6 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, assistants }: 
                 {assistants?.map(a => (
                   <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
                 ))}
-                {/* Fallback mock if no assistants provided */}
-                {!assistants && (
-                  <>
-                    <option value="1">Sarah Collins (Senior)</option>
-                    <option value="2">James Wilson (Junior)</option>
-                    <option value="3">Emily Davis (Executive)</option>
-                  </>
-                )}
               </select>
             </div>
           </div>
