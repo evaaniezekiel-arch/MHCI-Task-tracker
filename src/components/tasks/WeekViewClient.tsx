@@ -4,7 +4,8 @@ import React from 'react';
 import TaskTable from '@/components/tasks/TaskTable';
 import { useRealtimeSubscription } from '@/lib/supabase/realtime';
 import { Task } from '@/lib/types';
-import { Sparkles, Brain, Target, Shield } from 'lucide-react';
+import { Sparkles, Brain, Target, Shield, Loader2 } from 'lucide-react';
+import { getWeeklySummary } from '@/actions/ai';
 
 interface WeekViewClientProps {
   weekId: string;
@@ -28,6 +29,24 @@ export default function WeekViewClient({
   const total = initialTasks.length;
   const done = initialTasks.filter(t => t.status === 'Done').length;
   const progress = total > 0 ? (done / total) * 100 : 0;
+
+  const [summary, setSummary] = React.useState<{ strategicLoad: string, efficiencyForecast: string, recommendation: string } | null>(null);
+  const [loadingSummary, setLoadingSummary] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchSummary = async () => {
+      setLoadingSummary(true);
+      try {
+        const result = await getWeeklySummary(initialTasks, weekNumber);
+        setSummary(result);
+      } catch (error) {
+        console.error('Failed to fetch weekly summary:', error);
+      } finally {
+        setLoadingSummary(false);
+      }
+    };
+    fetchSummary();
+  }, [weekId]);
 
   return (
     <div className="space-y-6">
@@ -61,34 +80,47 @@ export default function WeekViewClient({
             <span>Secure Analysis Active</span>
           </div>
         </div>
-        <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-zinc-500">
-              <Brain size={14} />
-              <span className="text-[9px] font-black uppercase tracking-widest">Strategic Load</span>
+        <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8 min-h-[160px]">
+          {loadingSummary ? (
+            <div className="col-span-3 flex items-center justify-center space-x-3 text-zinc-500">
+              <Loader2 size={16} className="animate-spin" />
+              <span className="text-[10px] font-bold uppercase tracking-widest animate-pulse">Analyzing Week {weekNumber} Strategic Data...</span>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              Task density for Week {weekNumber} is concentrated in Compliance and Resource Management. No critical overlaps detected.
-            </p>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-zinc-500">
-              <Target size={14} />
-              <span className="text-[9px] font-black uppercase tracking-widest">Efficiency Forecast</span>
+          ) : summary ? (
+            <>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-zinc-500">
+                  <Brain size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Strategic Load</span>
+                </div>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  {summary.strategicLoad}
+                </p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-zinc-500">
+                  <Target size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Efficiency Forecast</span>
+                </div>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  {summary.efficiencyForecast}
+                </p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-zinc-500">
+                  <Sparkles size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">AI Recommendation</span>
+                </div>
+                <div className="px-4 py-3 bg-[#131313] border border-[#2a2a2a] rounded-xl">
+                  <p className="text-xs text-white font-medium">{summary.recommendation}</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="col-span-3 flex items-center justify-center text-zinc-600 italic text-xs">
+              Configure AI in settings to enable weekly strategic intelligence.
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              Current trajectory suggests 94% completion by EOD Friday. Sarah Collins has optimized her queue for 12% higher throughput.
-            </p>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-zinc-500">
-              <Sparkles size={14} />
-              <span className="text-[9px] font-black uppercase tracking-widest">AI Recommendation</span>
-            </div>
-            <div className="px-4 py-3 bg-[#131313] border border-[#2a2a2a] rounded-xl">
-              <p className="text-xs text-white font-medium">Reallocate "Security Audit" to Emily to resolve the mid-week bottleneck.</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

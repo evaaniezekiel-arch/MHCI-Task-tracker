@@ -115,3 +115,56 @@ export async function getStrategyAdvice(taskTitle: string, taskDescription: stri
     };
   }
 }
+
+export async function getWeeklySummary(tasks: any[], weekNumber: number) {
+  const config = await getAiConfig();
+  
+  if (!config) return null;
+
+  const taskList = tasks.map(t => `- ${t.title} (${t.status}, ${t.priority})`).join('\n');
+
+  const prompt = `
+    As an AI Chief of Staff, analyze this week's task list for Week ${weekNumber}.
+    Tasks:
+    ${taskList}
+
+    Provide a strategic overview in JSON format:
+    {
+      "strategicLoad": "One sentence about the focus and density of work this week.",
+      "efficiencyForecast": "One sentence about the likelihood of completion and team performance.",
+      "recommendation": "One specific actionable recommendation for the CEO."
+    }
+  `;
+
+  try {
+    let content = "";
+    if (config.provider === 'gemini') {
+      const genAI = new GoogleGenerativeAI(config.api_key);
+      const model = genAI.getGenerativeModel({ model: config.model_name });
+      const result = await model.generateContent(prompt);
+      content = result.response.text();
+    } else if (config.provider === 'openai') {
+      const openai = new OpenAI({ apiKey: config.api_key });
+      const response = await openai.chat.completions.create({
+        model: config.model_name,
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" }
+      });
+      content = response.choices[0].message.content || '{}';
+    } else if (config.provider === 'claude') {
+      const anthropic = new Anthropic({ apiKey: config.api_key });
+      const response = await anthropic.messages.create({
+        model: config.model_name,
+        max_tokens: 1024,
+        messages: [{ role: "user", content: prompt }]
+      });
+      content = response.content[0].type === 'text' ? response.content[0].text : '';
+    }
+
+    const cleanJson = content.replace(/```json|```/g, '').trim();
+    return JSON.parse(cleanJson);
+  } catch (error) {
+    console.error('Weekly Summary Error:', error);
+    return null;
+  }
+}
