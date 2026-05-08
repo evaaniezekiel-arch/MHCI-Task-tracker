@@ -34,8 +34,11 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
     { name: 'Review Hub', icon: Sparkles, href: '/tasks/review' },
   ];
 
-  if (role === 'admin' || role === 'executive') {
+  if (role === 'admin') {
     navItems.push({ name: 'AI Config', icon: Settings2, href: '/settings/ai' });
+  }
+
+  if (role === 'admin' || role === 'executive') {
     navItems.push({ name: 'User Mgmt', icon: Settings, href: '/admin/users' });
   }
 

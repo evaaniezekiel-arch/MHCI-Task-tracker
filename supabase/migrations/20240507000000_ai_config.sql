@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS ai_config (
 -- RLS Policies
 ALTER TABLE ai_config ENABLE ROW LEVEL SECURITY;
 
--- Only admins and executives can see/modify AI config
-CREATE POLICY "Admins/Executives can manage AI config" 
+-- Only admins can see/modify AI config
+CREATE POLICY "Admins can manage AI config" 
 ON ai_config 
 FOR ALL 
 TO authenticated 
@@ -24,7 +24,7 @@ USING (
     EXISTS (
         SELECT 1 FROM profiles 
         WHERE profiles.id = auth.uid() 
-        AND profiles.role IN ('admin', 'executive')
+        AND profiles.role = 'admin'
     )
 );
 
