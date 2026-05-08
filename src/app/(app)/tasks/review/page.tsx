@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { Sparkles, CheckCircle, AlertCircle, Clock, Search, Filter, User, MoreVertical, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AiStrategyLab from '@/components/dashboard/AiStrategyLab';
@@ -25,7 +28,7 @@ export default function ReviewHubPage() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchTasks();
   }, []);
 
@@ -33,7 +36,7 @@ export default function ReviewHubPage() {
     try {
       await updateTaskStatus(taskId, 'Done');
       toast.success('Activity Approved');
-      fetchTasks(); // Refresh list
+      fetchTasks();
     } catch (error) {
       toast.error('Failed to approve activity');
     }
