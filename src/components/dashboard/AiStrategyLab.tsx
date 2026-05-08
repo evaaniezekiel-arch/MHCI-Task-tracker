@@ -1,8 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Sparkles, X, Brain, Target, Users } from 'lucide-react';
+import { Sparkles, X, Brain, Target, Users, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getStrategyAdvice } from '@/actions/ai';
 
 interface AiStrategyLabProps {
   isOpen: boolean;
@@ -15,6 +16,28 @@ interface AiStrategyLabProps {
 }
 
 export default function AiStrategyLab({ isOpen, onClose, taskData }: AiStrategyLabProps) {
+  const [loading, setLoading] = React.useState(false);
+  const [advice, setAdvice] = React.useState<{ summary: string, approach: string[], resource: string } | null>(null);
+
+  React.useEffect(() => {
+    if (isOpen && taskData) {
+      const fetchAdvice = async () => {
+        setLoading(true);
+        try {
+          const result = await getStrategyAdvice(taskData.title, taskData.description || '');
+          setAdvice(result);
+        } catch (error) {
+          console.error('Failed to fetch AI advice:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchAdvice();
+    } else {
+      setAdvice(null);
+    }
+  }, [isOpen, taskData]);
+
   if (!isOpen) return null;
 
   return (
@@ -46,60 +69,70 @@ export default function AiStrategyLab({ isOpen, onClose, taskData }: AiStrategyL
           </div>
 
           {/* Content */}
-          <div className="p-8 space-y-8">
-            {/* Executive Summary */}
-            <section className="space-y-3">
-              <div className="flex items-center space-x-2 text-zinc-400">
-                <Brain size={16} />
-                <span className="text-[10px] uppercase font-bold tracking-widest">Executive Summary</span>
+          <div className="p-8 space-y-8 min-h-[400px] flex flex-col">
+            {loading ? (
+              <div className="flex-1 flex flex-col items-center justify-center space-y-4">
+                <Loader2 size={40} className="text-white animate-spin" />
+                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest animate-pulse">Consulting Strategic Models...</p>
               </div>
-              <p className="text-lg text-white leading-relaxed font-medium">
-                AI analysis indicates this task ({taskData?.title || 'Selected Objective'}) is a critical driver for Q4 growth. 
-                Immediate resource leveling is recommended to mitigate potential compliance bottlenecks.
-              </p>
-            </section>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Recommended Approach */}
-              <section className="space-y-4">
-                <div className="flex items-center space-x-2 text-zinc-400">
-                  <Target size={16} />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Recommended Approach</span>
-                </div>
-                <ul className="space-y-3">
-                  {[
-                    "Verify cross-departmental impact.",
-                    "Standardize documentation protocols.",
-                    "Prioritize high-value milestones."
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start space-x-3 text-sm text-zinc-300">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              {/* Resource Allocation */}
-              <section className="space-y-4">
-                <div className="flex items-center space-x-2 text-zinc-400">
-                  <Users size={16} />
-                  <span className="text-[10px] uppercase font-bold tracking-widest">Resource Allocation</span>
-                </div>
-                <div className="bg-[#131313] border border-[#2a2a2a] p-4 rounded-xl space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold">S</div>
-                    <div>
-                      <p className="text-sm font-bold text-white">Sarah Collins</p>
-                      <p className="text-[10px] text-zinc-500 font-bold uppercase">Senior Assistant</p>
-                    </div>
+            ) : advice ? (
+              <>
+                {/* Executive Summary */}
+                <section className="space-y-3">
+                  <div className="flex items-center space-x-2 text-zinc-400">
+                    <Brain size={16} />
+                    <span className="text-[10px] uppercase font-bold tracking-widest">Executive Summary</span>
                   </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    Sarah is best suited for this task given her deep expertise in institutional compliance and Q4 protocol history.
+                  <p className="text-lg text-white leading-relaxed font-medium">
+                    {advice.summary}
                   </p>
+                </section>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Recommended Approach */}
+                  <section className="space-y-4">
+                    <div className="flex items-center space-x-2 text-zinc-400">
+                      <Target size={16} />
+                      <span className="text-[10px] uppercase font-bold tracking-widest">Recommended Approach</span>
+                    </div>
+                    <ul className="space-y-3">
+                      {advice.approach.map((item, i) => (
+                        <li key={i} className="flex items-start space-x-3 text-sm text-zinc-300">
+                          <span className="mt-1 w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  {/* Resource Allocation */}
+                  <section className="space-y-4">
+                    <div className="flex items-center space-x-2 text-zinc-400">
+                      <Users size={16} />
+                      <span className="text-[10px] uppercase font-bold tracking-widest">Resource Allocation</span>
+                    </div>
+                    <div className="bg-[#131313] border border-[#2a2a2a] p-4 rounded-xl space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold">
+                          {advice.resource.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-white">Recommended Resource</p>
+                          <p className="text-[10px] text-zinc-500 font-bold uppercase">Strategic Alignment</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-zinc-400 leading-relaxed">
+                        {advice.resource}
+                      </p>
+                    </div>
+                  </section>
                 </div>
-              </section>
-            </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
+                <p className="text-sm text-zinc-500">Select a task to generate strategic advice.</p>
+              </div>
+            )}
           </div>
 
           {/* Footer */}
