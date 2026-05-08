@@ -4,15 +4,12 @@ import React from 'react';
 import { Sparkles, X, Brain, Target, Users, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getStrategyAdvice } from '@/actions/ai';
+import { Task } from '@/lib/types';
 
 interface AiStrategyLabProps {
   isOpen: boolean;
   onClose: () => void;
-  taskData?: {
-    title: string;
-    description: string;
-    priority: string;
-  };
+  taskData: Task | null;
 }
 
 export default function AiStrategyLab({ isOpen, onClose, taskData }: AiStrategyLabProps) {
