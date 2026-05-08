@@ -5,20 +5,26 @@ import MonthlyBarChart from '@/components/dashboard/MonthlyBarChart';
 import WeeklyTrendChart from '@/components/dashboard/WeeklyTrendChart';
 import PendingReview from '@/components/dashboard/PendingReview';
 import { getOverallStats, getMonthlyPerformance, getWeeklyTrend } from '@/actions/dashboard';
+import { getReviewTasks } from '@/actions/tasks';
 
 export const dynamic = 'force-dynamic';
-
 export default async function DashboardPage() {
   let stats: any[] = [];
   let monthlyData: any[] = [];
   let weeklyTrend: any[] = [];
+  let reviewTasks: any[] = [];
 
   try {
-    [stats, monthlyData, weeklyTrend] = await Promise.all([
+    const [statsRes, monthlyRes, weeklyRes, reviewRes] = await Promise.all([
       getOverallStats(),
       getMonthlyPerformance(),
-      getWeeklyTrend()
+      getWeeklyTrend(),
+      getReviewTasks()
     ]);
+    stats = statsRes;
+    monthlyData = monthlyRes;
+    weeklyTrend = weeklyRes;
+    reviewTasks = reviewRes;
   } catch (error) {
     console.error('Dashboard data fetch error:', error);
   }
@@ -42,7 +48,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <PendingReview />
+          <PendingReview tasks={reviewTasks} />
         </div>
         <div className="lg:col-span-1 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
           <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Efficiency Quotient</h3>

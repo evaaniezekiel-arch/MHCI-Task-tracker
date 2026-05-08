@@ -1,6 +1,6 @@
-export type Role = 'admin' | 'executive' | 'assistant';
+export type Role = 'admin' | 'executive' | 'assistant' | 'member';
 export type Priority = 'Critical' | 'High' | 'Medium' | 'Low';
-export type Status = 'Done' | 'In-Progress' | 'Pending' | 'Undone' | 'KIV';
+export type Status = 'Done' | 'In-Progress' | 'Pending' | 'Undone' | 'KIV' | 'Review';
 
 export interface Profile {
   id: string;

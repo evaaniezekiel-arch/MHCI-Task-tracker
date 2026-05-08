@@ -5,16 +5,14 @@ import { Sparkles, ArrowRight, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AiStrategyLab from './AiStrategyLab';
 
+import { Task } from '@/lib/types';
+
 interface PendingReviewProps {
-  tasks?: any[];
+  tasks?: Task[];
 }
 
-export default function PendingReview({ tasks = [
-  { id: 1, title: 'Q4 Budget Approval', assignee: 'Sarah Collins', status: 'Pending' },
-  { id: 2, title: 'Global Security Audit', assignee: 'James Wilson', status: 'Pending' },
-  { id: 3, title: 'Executive Retreat Planning', assignee: 'Emily Davis', status: 'Pending' }
-] }: PendingReviewProps) {
-  const [selectedTask, setSelectedTask] = useState<any>(null);
+export default function PendingReview({ tasks = [] }: PendingReviewProps) {
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   return (
     <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
@@ -26,6 +24,11 @@ export default function PendingReview({ tasks = [
       </div>
 
       <div className="space-y-4">
+        {tasks.length === 0 && (
+          <div className="text-center py-10">
+            <p className="text-xs text-zinc-600 font-bold uppercase tracking-widest">No activities pending review</p>
+          </div>
+        )}
         {tasks.map((task) => (
           <div 
             key={task.id}
@@ -38,7 +41,9 @@ export default function PendingReview({ tasks = [
               <div>
                 <h4 className="text-sm font-bold text-white">{task.title}</h4>
                 <div className="flex items-center space-x-2 mt-1">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase">{task.assignee}</span>
+                  <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                    {task.assignees?.[0]?.profile?.full_name || 'Unassigned'}
+                  </span>
                   <span className="w-1 h-1 rounded-full bg-zinc-700" />
                   <span className="text-[10px] text-zinc-600 uppercase font-bold tracking-tighter">Review Required</span>
                 </div>
