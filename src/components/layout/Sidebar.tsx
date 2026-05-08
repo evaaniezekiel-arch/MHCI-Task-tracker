@@ -29,7 +29,7 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { name: 'New Task', icon: Plus, href: '/tasks/new' },
+    { name: 'Tasks', icon: ListTodo, href: '/tasks' },
     { name: 'Weekly Review', icon: Calendar, href: '/week' },
     { name: 'Review Hub', icon: Sparkles, href: '/tasks/review' },
   ];
