@@ -45,6 +45,7 @@ export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTask
         due_date: row.DueDate || row.due_date || row.Date || '',
         priority: row.Priority || row.priority || 'Medium',
         status: row.Status || row.status || 'Pending',
+        week_number: row.WeekNumber || row.week_number || null,
         created_at: row.CreatedAt || row.CreatedDate || row.created_at || null
       }));
       
@@ -77,14 +78,34 @@ export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTask
   };
 
   const downloadTemplate = () => {
-    const template = [
-      { Title: 'Security Audit', Description: 'Review system logs', DueDate: '2024-05-15', Priority: 'Critical', Status: 'Pending', CreatedAt: '2024-05-01' },
-      { Title: 'Budget Review', Description: 'Approve Q3 expenses', DueDate: '2024-05-16', Priority: 'High', Status: 'Pending', CreatedAt: '2024-05-02' }
-    ];
-    const ws = XLSX.utils.json_to_sheet(template);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-    XLSX.writeFile(wb, "MHCI_Task_Template.xlsx");
+
+    // Sheet 1: All Tasks (Import)
+    const importTemplate = [
+      { WeekNumber: 1, Title: 'Executive Strategic Review', Description: 'Quarterly planning session', DueDate: '2024-05-15', Priority: 'Critical', Status: 'Pending', CreatedAt: '2024-05-01' },
+      { WeekNumber: 2, Title: 'Budget Audit', Description: 'Review Q2 spend', DueDate: '2024-05-22', Priority: 'High', Status: 'Pending', CreatedAt: '2024-05-08' }
+    ];
+    const wsImport = XLSX.utils.json_to_sheet(importTemplate);
+    XLSX.utils.book_append_sheet(wb, wsImport, "All Tasks (Import)");
+
+    // Sheet 2: 📅 Week Reference
+    const weekRef = Array.from({ length: 52 }, (_, i) => ({
+      Week: i + 1,
+      Range: `W${(i + 1).toString().padStart(2, '0')} Reference Data`
+    }));
+    const wsRef = XLSX.utils.json_to_sheet(weekRef);
+    XLSX.utils.book_append_sheet(wb, wsRef, "📅 Week Reference");
+
+    // Sheet Last: Instructions
+    const instructions = [
+      { Step: 1, Instruction: 'Populate "All Tasks (Import)" with your activities.' },
+      { Step: 2, Instruction: 'Use "📅 Week Reference" to find the correct WeekNumber.' },
+      { Step: 3, Instruction: 'Upload this file using the Global Import button.' }
+    ];
+    const wsInstr = XLSX.utils.json_to_sheet(instructions);
+    XLSX.utils.book_append_sheet(wb, wsInstr, "Instructions");
+
+    XLSX.writeFile(wb, "MHCI_Executive_Command_Template.xlsx");
   };
 
   if (!isOpen) return null;
