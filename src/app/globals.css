@@ -26,89 +26,72 @@
 }
 
 :root {
-  --background: #fafafa;
-  --foreground: #09090b;
+  --background: #131313;
+  --foreground: #e5e2e1;
 
-  --card: #ffffff;
-  --card-foreground: #000000;
+  --card: #1c1b1b;
+  --card-foreground: #e5e2e1;
 
-  --popover: #ffffff;
-  --popover-foreground: #000000;
+  --popover: #201f1f;
+  --popover-foreground: #e5e2e1;
 
-  --primary: #000000;
-  --primary-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #131313;
 
-  --secondary: #f2f2f2;
-  --secondary-foreground: #000000;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #e5e2e1;
 
-  --muted: #f2f2f2;
-  --muted-foreground: #666666;
+  --muted: #1c1b1b;
+  --muted-foreground: #c4c7c8;
 
-  --accent: #f2f2f2;
-  --accent-foreground: #000000;
+  --accent: #3a3939;
+  --accent-foreground: #ffffff;
 
-  --destructive: #ffc7ce;
-  --destructive-foreground: #9b2335;
+  --destructive: #ffffff;
+  --destructive-foreground: #131313;
 
-  --border: #e2e2e2;
-  --input: #e2e2e2;
-  --ring: #000000;
+  --border: #2a2a2a;
+  --input: #1c1b1b;
+  --ring: #ffffff;
 
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 
-  /* Status Colors */
-  --status-done-bg: #c6efce;
-  --status-done-text: #2d7a3a;
-  --status-progress-bg: #ffeb9c;
-  --status-progress-text: #856a00;
-  --status-pending-bg: #ddeeff;
-  --status-pending-text: #1a4d8a;
-  --status-undone-bg: #ffc7ce;
-  --status-undone-text: #9b2335;
-  --status-kiv-bg: #e2c4f0;
-  --status-kiv-text: #6b3fa0;
+  /* Executive Tonal Grays for Status */
+  --status-done: #ffffff;
+  --status-progress: #c4c7c8;
+  --status-pending: #8e9192;
+  --status-undone: #444748;
+  --status-kiv: #2a2a2a;
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+  --background: #131313;
+  --foreground: #e5e2e1;
 
-  --card: #111113;
-  --card-foreground: #fafafa;
+  --card: #1c1b1b;
+  --card-foreground: #e5e2e1;
 
-  --popover: #111113;
-  --popover-foreground: #fafafa;
+  --popover: #201f1f;
+  --popover-foreground: #e5e2e1;
 
-  --primary: #fafafa;
-  --primary-foreground: #09090b;
+  --primary: #ffffff;
+  --primary-foreground: #131313;
 
-  --secondary: #1c1c1e;
-  --secondary-foreground: #fafafa;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #e5e2e1;
 
-  --muted: #1c1c1e;
-  --muted-foreground: #a1a1aa;
+  --muted: #1c1b1b;
+  --muted-foreground: #c4c7c8;
 
-  --accent: #1c1c1e;
-  --accent-foreground: #fafafa;
+  --accent: #3a3939;
+  --accent-foreground: #ffffff;
 
-  --destructive: #9b2335;
-  --destructive-foreground: #ffc7ce;
+  --destructive: #ffffff;
+  --destructive-foreground: #131313;
 
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #d4d4d8;
-
-  /* Status Colors (Dark Mode) */
-  --status-done-bg: #064e3b;
-  --status-done-text: #6ee7b7;
-  --status-progress-bg: #78350f;
-  --status-progress-text: #fcd34d;
-  --status-pending-bg: #1e3a8a;
-  --status-pending-text: #93c5fd;
-  --status-undone-bg: #7f1d1d;
-  --status-undone-text: #fca5a5;
-  --status-kiv-bg: #4c1d95;
-  --status-kiv-text: #c4b5fd;
+  --border: #2a2a2a;
+  --input: #1c1b1b;
+  --ring: #ffffff;
 }
 
 @layer base {

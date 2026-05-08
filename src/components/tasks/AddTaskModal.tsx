@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Loader2, CalendarDays, AlignLeft, Flag, Type } from 'lucide-react';
+import { X, Loader2, CalendarDays, AlignLeft, Flag, Type, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Priority } from '@/lib/types';
+import { Priority, Profile } from '@/lib/types';
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -13,7 +13,9 @@ interface AddTaskModalProps {
     description: string;
     dueDate: string;
     priority: Priority;
+    assigneeId?: string;
   }) => Promise<void>;
+  assistants?: Profile[];
 }
 
 const PRIORITIES: { value: Priority; label: string; color: string }[] = [
@@ -28,6 +30,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<Priority>('Medium');
+  const [assigneeId, setAssigneeId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
 
@@ -45,6 +48,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
       setDescription('');
       setDueDate('');
       setPriority('Medium');
+      setAssigneeId('');
       setIsSubmitting(false);
     }
   }, [isOpen]);
@@ -64,7 +68,13 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
     
     setIsSubmitting(true);
     try {
-      await onSubmit({ title: title.trim(), description, dueDate, priority });
+      await onSubmit({ 
+        title: title.trim(), 
+        description, 
+        dueDate, 
+        priority,
+        assigneeId: assigneeId || undefined
+      });
       onClose();
     } catch {
       setIsSubmitting(false);
@@ -167,6 +177,34 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModal
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Assignee Selection */}
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              <Users size={12} />
+              Assign to Assistant
+            </label>
+            <div className="grid grid-cols-1 gap-2">
+              <select 
+                value={assigneeId}
+                onChange={(e) => setAssigneeId(e.target.value)}
+                className="w-full px-4 py-3 bg-muted/50 border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all appearance-none"
+              >
+                <option value="">Unassigned</option>
+                {assistants?.map(a => (
+                  <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                ))}
+                {/* Fallback mock if no assistants provided */}
+                {!assistants && (
+                  <>
+                    <option value="1">Sarah Collins (Senior)</option>
+                    <option value="2">James Wilson (Junior)</option>
+                    <option value="3">Emily Davis (Executive)</option>
+                  </>
+                )}
+              </select>
             </div>
           </div>
 

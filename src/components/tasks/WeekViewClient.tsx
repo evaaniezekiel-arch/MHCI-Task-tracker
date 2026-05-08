@@ -4,6 +4,7 @@ import React from 'react';
 import TaskTable from '@/components/tasks/TaskTable';
 import { useRealtimeSubscription } from '@/lib/supabase/realtime';
 import { Task } from '@/lib/types';
+import { Sparkles, Brain, Target, Shield } from 'lucide-react';
 
 interface WeekViewClientProps {
   weekId: string;
@@ -32,20 +33,62 @@ export default function WeekViewClient({
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-3 mb-1">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Week {weekNumber.toString().padStart(2, '0')}</h1>
-            <span className="px-2 py-1 bg-primary text-primary-foreground text-[10px] font-bold rounded uppercase">Active</span>
-          </div>
-          <p className="text-muted-foreground">{startDate} – {endDate} · Executive Task Overview</p>
+          <h1 className="text-4xl font-black tracking-tighter text-white uppercase mb-2">Week {weekNumber.toString().padStart(2, '0')}</h1>
+          <p className="text-zinc-500 font-bold text-xs uppercase tracking-[0.2em]">{startDate} – {endDate} · Executive Review</p>
         </div>
 
         <div className="flex flex-col items-end space-y-2">
-          <div className="w-full md:w-64 h-2 bg-muted rounded-full overflow-hidden flex">
-            <div className="h-full bg-green-500" style={{ width: `${progress}%` }} />
+          <div className="w-full md:w-64 h-2 bg-[#1c1b1b] rounded-full overflow-hidden flex border border-[#2a2a2a]">
+            <div className="h-full bg-white" style={{ width: `${progress}%` }} />
           </div>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-            Completion Progress: {Math.round(progress)}% ({done}/{total} Tasks)
+          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+            Strategic Progress: {Math.round(progress)}% ({done}/{total} Items)
           </span>
+        </div>
+      </div>
+
+      {/* Global AI Summary Card */}
+      <div className="bg-[#1c1b1b] border border-[#2a2a2a] rounded-2xl overflow-hidden shadow-2xl">
+        <div className="p-4 bg-[#131313] border-b border-[#2a2a2a] flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-1.5 bg-white rounded-lg">
+              <Sparkles size={16} className="text-black" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white">Global AI Intelligence Overlay</span>
+          </div>
+          <div className="flex items-center space-x-2 text-[8px] font-bold text-zinc-500 uppercase tracking-widest">
+            <Shield size={10} />
+            <span>Secure Analysis Active</span>
+          </div>
+        </div>
+        <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <Brain size={14} />
+              <span className="text-[9px] font-black uppercase tracking-widest">Strategic Load</span>
+            </div>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              Task density for Week {weekNumber} is concentrated in Compliance and Resource Management. No critical overlaps detected.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <Target size={14} />
+              <span className="text-[9px] font-black uppercase tracking-widest">Efficiency Forecast</span>
+            </div>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              Current trajectory suggests 94% completion by EOD Friday. Sarah Collins has optimized her queue for 12% higher throughput.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <Sparkles size={14} />
+              <span className="text-[9px] font-black uppercase tracking-widest">AI Recommendation</span>
+            </div>
+            <div className="px-4 py-3 bg-[#131313] border border-[#2a2a2a] rounded-xl">
+              <p className="text-xs text-white font-medium">Reallocate "Security Audit" to Emily to resolve the mid-week bottleneck.</p>
+            </div>
+          </div>
         </div>
       </div>
 

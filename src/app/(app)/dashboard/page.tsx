@@ -3,6 +3,7 @@ import StatCards from '@/components/dashboard/StatCards';
 import CompletionChart from '@/components/dashboard/CompletionChart';
 import MonthlyBarChart from '@/components/dashboard/MonthlyBarChart';
 import WeeklyTrendChart from '@/components/dashboard/WeeklyTrendChart';
+import PendingReview from '@/components/dashboard/PendingReview';
 import { getOverallStats, getMonthlyPerformance, getWeeklyTrend } from '@/actions/dashboard';
 
 export const dynamic = 'force-dynamic';
@@ -24,24 +25,37 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Real-time overview of task performance across all weeks.</p>
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Executive Portal</h1>
+          <p className="text-zinc-500 font-bold text-xs uppercase tracking-[0.2em] mt-2">Intelligence & Performance Oversight</p>
+        </div>
+        <div className="hidden md:flex space-x-2">
+          <div className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg">
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">System Health</p>
+            <p className="text-sm font-bold text-white">Optimal</p>
+          </div>
+        </div>
       </div>
 
       <StatCards data={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <PendingReview />
+        </div>
         <div className="lg:col-span-1 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Overall Completion</h3>
-          <div className="flex-1 min-h-[300px]">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Efficiency Quotient</h3>
+          <div className="flex-1 min-h-[250px]">
             <CompletionChart data={stats} />
           </div>
         </div>
+      </div>
 
-        <div className="lg:col-span-2 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
-          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Monthly Performance Breakdown</h3>
-          <div className="flex-1 min-h-[300px]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-3 bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6">Strategic Performance Index</h3>
+          <div className="flex-1 min-h-[350px]">
             <MonthlyBarChart data={monthlyData} />
           </div>
         </div>

@@ -20,11 +20,11 @@ const iconMap: Record<string, any> = {
 };
 
 const colorMap: Record<string, string> = {
-  'Done': 'bg-[#C6EFCE] text-[#2D7A3A]',
-  'In-Progress': 'bg-[#FFEB9C] text-[#856A00]',
-  'Pending': 'bg-[#DDEEFF] text-[#1A4D8A]',
-  'Undone': 'bg-[#FFC7CE] text-[#9B2335]',
-  'KIV': 'bg-[#E2C4F0] text-[#6B3FA0]',
+  'Done': 'bg-white text-black',
+  'In-Progress': 'bg-zinc-800 text-white',
+  'Pending': 'bg-zinc-900 text-zinc-400',
+  'Undone': 'bg-zinc-950 text-zinc-600',
+  'KIV': 'bg-black text-zinc-800',
 };
 
 interface StatCardsProps {

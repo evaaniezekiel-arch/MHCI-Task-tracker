@@ -10,7 +10,10 @@ import {
   ChevronLeft, 
   ChevronRight,
   LogOut,
-  ListTodo
+  ListTodo,
+  Plus,
+  Sparkles,
+  Settings2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/actions/auth';
@@ -26,10 +29,13 @@ export default function Sidebar({ role = 'member', weeks = [] }: SidebarProps) {
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { name: 'Tasks', icon: ListTodo, href: '/tasks' },
+    { name: 'New Task', icon: Plus, href: '/tasks/new' },
+    { name: 'Weekly Review', icon: Calendar, href: '/week' },
+    { name: 'Review Hub', icon: Sparkles, href: '/tasks/review' },
   ];
 
   if (role === 'admin' || role === 'executive') {
+    navItems.push({ name: 'AI Config', icon: Settings2, href: '/settings/ai' });
     navItems.push({ name: 'User Mgmt', icon: Settings, href: '/admin/users' });
   }
 
