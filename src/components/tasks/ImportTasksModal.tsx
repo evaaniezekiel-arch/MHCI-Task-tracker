@@ -4,14 +4,14 @@ import React, { useState, useRef } from 'react';
 import { X, Loader2, FileUp, FileText, CheckCircle2, AlertCircle, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
-import { bulkImportTasks } from '@/actions/tasks';
+import { bulkImportTasks, importTasksGlobally } from '@/actions/tasks';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 interface ImportTasksModalProps {
   isOpen: boolean;
   onClose: () => void;
-  weekId: string;
+  weekId?: string;
 }
 
 export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTasksModalProps) {
@@ -58,7 +58,10 @@ export default function ImportTasksModal({ isOpen, onClose, weekId }: ImportTask
     
     setIsImporting(true);
     try {
-      const result = await bulkImportTasks(weekId, previewData);
+      const result = weekId 
+        ? await bulkImportTasks(weekId, previewData)
+        : await importTasksGlobally(previewData);
+
       if (result.error) {
         toast.error(result.error);
       } else {

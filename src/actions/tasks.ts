@@ -181,3 +181,88 @@ export async function bulkImportTasks(weekId: string, tasks: any[]) {
   revalidatePath('/tasks');
   return { success: true, count: data.length };
 }
+
+export async function importTasksGlobally(tasks: any[]) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'You must be logged in to import tasks.' };
+
+  const admin = createAdminClient();
+  const { getWeekBounds, getWeekNumber } = await import('@/lib/utils');
+
+  const processedTasks = [];
+  const weekCache = new Map(); // Cache week IDs to avoid redundant lookups
+
+  for (const task of tasks) {
+    const taskDateStr = task.created_at || task.due_date || new Date().toISOString();
+    const taskDate = new Date(taskDateStr);
+    const { start, end } = getWeekBounds(taskDate);
+    const weekNum = getWeekNumber(taskDate);
+    const year = taskDate.getFullYear();
+    const cacheKey = `${year}-${weekNum}`;
+
+    let weekId = weekCache.get(cacheKey);
+
+    if (!weekId) {
+      // Find or create week
+      const { data: existingWeek } = await admin
+        .from('weeks')
+        .select('id')
+        .eq('week_number', weekNum)
+        .eq('year', year)
+        .single();
+
+      if (existingWeek) {
+        weekId = existingWeek.id;
+      } else {
+        const { data: newWeek, error: weekErr } = await admin
+          .from('weeks')
+          .insert({
+            week_number: weekNum,
+            start_date: start,
+            end_date: end,
+            year: year,
+            created_by: user.id
+          })
+          .select()
+          .single();
+        
+        if (weekErr) {
+          console.error('Failed to create week during import:', weekErr);
+          continue; // Skip this task if week creation fails
+        }
+        weekId = newWeek.id;
+      }
+      weekCache.set(cacheKey, weekId);
+    }
+
+    processedTasks.push({
+      week_id: weekId,
+      title: task.title,
+      description: task.description || null,
+      due_date: task.due_date || null,
+      priority: task.priority || 'Medium',
+      status: task.status || 'Pending',
+      created_by: user.id,
+      updated_by: user.id,
+      created_at: taskDateStr,
+      position: 0
+    });
+  }
+
+  if (processedTasks.length === 0) return { error: 'No valid tasks to import.' };
+
+  const { data, error } = await admin
+    .from('tasks')
+    .insert(processedTasks)
+    .select();
+
+  if (error) {
+    console.error('Global import error:', error);
+    return { error: error.message };
+  }
+
+  revalidatePath('/tasks');
+  revalidatePath('/dashboard');
+  return { success: true, count: data.length };
+}
