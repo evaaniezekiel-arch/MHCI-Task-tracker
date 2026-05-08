@@ -25,7 +25,7 @@ const PRIORITIES: { value: Priority; label: string; color: string }[] = [
   { value: 'Low', label: 'Low', color: 'bg-green-500/15 text-green-500 border-green-500/30' },
 ];
 
-export default function AddTaskModal({ isOpen, onClose, onSubmit }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, onSubmit, assistants }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
