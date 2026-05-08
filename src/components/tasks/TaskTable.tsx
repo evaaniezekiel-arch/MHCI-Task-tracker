@@ -7,12 +7,14 @@ import {
   MoreHorizontal, 
   Plus, 
   Download,
-  Trash2
+  Trash2,
+  FileUp
 } from 'lucide-react';
 import { Task, Status, Priority } from '@/lib/types';
 import { updateTask, updateTaskStatus, createTask, deleteTask } from '@/actions/tasks';
 import toast from 'react-hot-toast';
 import AddTaskModal from './AddTaskModal';
+import ImportTasksModal from './ImportTasksModal';
 
 interface TaskTableProps {
   initialTasks: Task[];
@@ -22,6 +24,7 @@ interface TaskTableProps {
 export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // Sync with prop updates (from server refresh)
   useEffect(() => {
@@ -112,15 +115,18 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
 
           <div className="flex items-center gap-3">
             <button 
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center space-x-2 bg-[#131313] border border-[#2a2a2a] text-zinc-400 px-4 py-2 rounded-lg text-sm font-black uppercase tracking-widest hover:text-white hover:border-white transition-all"
+            >
+              <FileUp size={16} />
+              <span>Import</span>
+            </button>
+            <button 
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center space-x-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-all"
+              className="flex items-center space-x-2 bg-white text-black px-4 py-2 rounded-lg text-sm font-black uppercase tracking-widest hover:bg-zinc-200 transition-all shadow-xl"
             >
               <Plus size={16} />
               <span>Add Task</span>
-            </button>
-            <button className="flex items-center space-x-2 text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border hover:bg-muted transition-all">
-              <Download size={16} />
-              <span>Export</span>
             </button>
           </div>
         </div>
@@ -239,6 +245,12 @@ export default function TaskTable({ initialTasks, weekId }: TaskTableProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddTask}
+      />
+
+      <ImportTasksModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        weekId={weekId}
       />
     </>
   );

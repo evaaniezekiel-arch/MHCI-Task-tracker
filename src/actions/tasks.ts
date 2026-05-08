@@ -145,3 +145,38 @@ export async function deleteTask(taskId: string) {
 export async function updateTaskStatus(taskId: string, status: Status) {
   return updateTask(taskId, { status });
 }
+
+export async function bulkImportTasks(weekId: string, tasks: any[]) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: 'You must be logged in to import tasks.' };
+
+  const admin = createAdminClient();
+
+  const tasksToInsert = tasks.map((task, index) => ({
+    week_id: weekId,
+    title: task.title,
+    description: task.description || null,
+    due_date: task.due_date || null,
+    priority: (task.priority as Priority) || 'Medium',
+    status: (task.status as Status) || 'Pending',
+    created_by: user.id,
+    updated_by: user.id,
+    position: index
+  }));
+
+  const { data, error } = await admin
+    .from('tasks')
+    .insert(tasksToInsert)
+    .select();
+
+  if (error) {
+    console.error('bulkImportTasks error:', error);
+    return { error: error.message || 'Failed to import tasks.' };
+  }
+
+  revalidatePath(`/week/${weekId}`);
+  revalidatePath('/tasks');
+  return { success: true, count: data.length };
+}
